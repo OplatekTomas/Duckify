@@ -13,6 +13,7 @@ using Duckify.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using AspNet.Security.OAuth.Spotify;
 using Duckify.Services;
 
 namespace Duckify {
@@ -36,7 +37,15 @@ namespace Duckify {
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            services.AddAuthentication().AddSpotify(options => {
+                options.ClientId = "";
+                options.ClientSecret = "";
+                options.SaveTokens = true;
+                string[] scopes = { "streaming", "user-read-birthdate" , "user-read-email", "user-read-private" , "user-read-playback-state" };
+                foreach (var scope in scopes) {
+                    options.Scope.Add(scope);
+                }
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -71,7 +80,6 @@ namespace Duckify {
             var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             string[] roleNames = { "Admin", "User" };
             IdentityResult roleResult;
-
             foreach (var roleName in roleNames) {
                 var roleExist = await RoleManager.RoleExistsAsync(roleName);
                 if (!roleExist) {

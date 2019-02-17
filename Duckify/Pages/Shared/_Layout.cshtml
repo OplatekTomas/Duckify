@@ -31,6 +31,9 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-page="/Index">Home</a></li>
+                    @if (User.IsInRole("Admin")) {
+                        <li><a asp-page="/SpotifyPlayer">Player</a></li>
+                    }
                     <li><a asp-page="/About">About</a></li>
                     <li><a asp-page="/Contact">Contact</a></li>
                 </ul>
