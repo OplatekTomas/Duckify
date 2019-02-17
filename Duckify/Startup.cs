@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Duckify.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Duckify.Services;
 
 namespace Duckify {
     public class Startup {
@@ -32,15 +34,18 @@ namespace Duckify {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider service) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
@@ -56,6 +61,36 @@ namespace Duckify {
             app.UseAuthentication();
 
             app.UseMvc();
+
+            CreateRoles(service).Wait();
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider) {
+            //initializing custom roles   
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            string[] roleNames = { "Admin", "User" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames) {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist) {
+                    //create the roles and seed them to the database
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            //TODO: Change these for prod.
+            IdentityUser user = await UserManager.FindByEmailAsync("test@test.test");
+            if (user == null) {
+                user = new IdentityUser() {
+                    UserName = "test@test.test",
+                    Email = "test@test.test",               
+                };
+                await UserManager.CreateAsync(user, "P@ssword0");
+            }
+            await UserManager.AddToRoleAsync(user, "Admin");
+
         }
     }
 }
