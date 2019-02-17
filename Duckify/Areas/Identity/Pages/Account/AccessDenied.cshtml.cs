@@ -4,12 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Duckify.Areas.Identity.Pages.Account
-{
-    public class AccessDeniedModel : PageModel
-    {
-        public void OnGet()
-        {
+namespace Duckify.Areas.Identity.Pages.Account {
+    public class AccessDeniedModel : PageModel {
+        public void OnGet() {
 
         }
     }

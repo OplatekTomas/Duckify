@@ -85,7 +85,7 @@ namespace Duckify {
             if (user == null) {
                 user = new IdentityUser() {
                     UserName = "test@test.test",
-                    Email = "test@test.test",               
+                    Email = "test@test.test",
                 };
                 await UserManager.CreateAsync(user, "P@ssword0");
             }

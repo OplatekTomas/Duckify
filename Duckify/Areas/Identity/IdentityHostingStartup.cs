@@ -8,12 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: HostingStartup(typeof(Duckify.Areas.Identity.IdentityHostingStartup))]
-namespace Duckify.Areas.Identity
-{
-    public class IdentityHostingStartup : IHostingStartup
-    {
-        public void Configure(IWebHostBuilder builder)
-        {
+namespace Duckify.Areas.Identity {
+    public class IdentityHostingStartup : IHostingStartup {
+        public void Configure(IWebHostBuilder builder) {
             builder.ConfigureServices((context, services) => {
             });
         }

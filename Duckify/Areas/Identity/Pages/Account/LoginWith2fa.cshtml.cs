@@ -9,16 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Duckify.Areas.Identity.Pages.Account
-{
+namespace Duckify.Areas.Identity.Pages.Account {
     [AllowAnonymous]
-    public class LoginWith2faModel : PageModel
-    {
+    public class LoginWith2faModel : PageModel {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
-        public LoginWith2faModel(SignInManager<IdentityUser> signInManager, ILogger<LoginWith2faModel> logger)
-        {
+        public LoginWith2faModel(SignInManager<IdentityUser> signInManager, ILogger<LoginWith2faModel> logger) {
             _signInManager = signInManager;
             _logger = logger;
         }
@@ -30,8 +27,7 @@ namespace Duckify.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
 
-        public class InputModel
-        {
+        public class InputModel {
             [Required]
             [StringLength(7, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Text)]
@@ -42,13 +38,11 @@ namespace Duckify.Areas.Identity.Pages.Account
             public bool RememberMachine { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(bool rememberMe, string returnUrl = null)
-        {
+        public async Task<IActionResult> OnGetAsync(bool rememberMe, string returnUrl = null) {
             // Ensure the user has gone through the username & password screen first
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
-            if (user == null)
-            {
+            if (user == null) {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
 
@@ -58,18 +52,15 @@ namespace Duckify.Areas.Identity.Pages.Account
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(bool rememberMe, string returnUrl = null)
-        {
-            if (!ModelState.IsValid)
-            {
+        public async Task<IActionResult> OnPostAsync(bool rememberMe, string returnUrl = null) {
+            if (!ModelState.IsValid) {
                 return Page();
             }
 
             returnUrl = returnUrl ?? Url.Content("~/");
 
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
-            {
+            if (user == null) {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
 
@@ -77,22 +68,17 @@ namespace Duckify.Areas.Identity.Pages.Account
 
             var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, Input.RememberMachine);
 
-            if (result.Succeeded)
-            {
+            if (result.Succeeded) {
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
                 return LocalRedirect(returnUrl);
-            }
-            else if (result.IsLockedOut)
-            {
+            } else if (result.IsLockedOut) {
                 _logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);
                 return RedirectToPage("./Lockout");
-            }
-            else
-            {
+            } else {
                 _logger.LogWarning("Invalid authenticator code entered for user with ID '{UserId}'.", user.Id);
                 ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
                 return Page();
             }
-        }  
+        }
     }
 }
