@@ -17,7 +17,6 @@ namespace Duckify.Areas.Identity.Pages.Account {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<ExternalLoginModel> _logger;
-        private string _token;
 
         public ExternalLoginModel(
             SignInManager<IdentityUser> signInManager,
@@ -71,11 +70,9 @@ namespace Duckify.Areas.Identity.Pages.Account {
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded) {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
-                var user = _userManager.Users.First(x => x.UserName == info.Principal.Identity.Name);
+
                 var token = info.AuthenticationTokens.First(x => x.Name == "access_token").Value;
-                user.SetSpotifyToken(token);
-                CookieOptions option = new CookieOptions();
-                Response.Cookies.Append("SpotifyToken", token, option);
+                Response.Cookies.Append("SpotifyToken", token, new CookieOptions { Secure = true, HttpOnly = true });
 
                 return LocalRedirect(returnUrl);
             }
@@ -110,7 +107,10 @@ namespace Duckify.Areas.Identity.Pages.Account {
                 if (result.Succeeded) {
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded) {
-                        user.SetSpotifyToken(info.AuthenticationTokens.First(x => x.Name == "access_token").Value);
+
+                        var token = info.AuthenticationTokens.First(x => x.Name == "access_token").Value;
+                        Response.Cookies.Append("SpotifyToken", token, new CookieOptions { Secure = true, HttpOnly = true });
+
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
                         return LocalRedirect(returnUrl);

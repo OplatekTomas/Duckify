@@ -22,9 +22,7 @@ namespace Duckify.Pages {
         }
 
         public async Task GetToken() {
-            var cookies = Request.Cookies.ToDictionary(x => x.Key, x => x.Value);
-            var user = await _manager.GetUserAsync(User);
-            Message = user.GetSpotifyToken();
+            Message = Request.Cookies["SpotifyToken"];
         }
     }
 }
