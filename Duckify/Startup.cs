@@ -15,8 +15,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using AspNet.Security.OAuth.Spotify;
 using Duckify.Services;
+using System.Runtime.CompilerServices;
 
 namespace Duckify {
+   
     public class Startup {
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
@@ -38,8 +40,8 @@ namespace Duckify {
             services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddAuthentication().AddSpotify(options => {
-                options.ClientId = "";
-                options.ClientSecret = "";
+                options.ClientId = "146234f4fccf47ffbe4de27b8b472ce8";
+                options.ClientSecret = "d4fcb4f8e79c4a909db89812710111b9";
                 options.SaveTokens = true;
                 string[] scopes = { "streaming", "user-read-birthdate" , "user-read-email", "user-read-private" , "user-read-playback-state" };
                 foreach (var scope in scopes) {

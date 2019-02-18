@@ -15,6 +15,6 @@ namespace Duckify {
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>().UseUrls("http://*:80");
+            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
     }
 }
