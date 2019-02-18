@@ -4,31 +4,18 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>aspnet-Duckify-C472152A-D7DB-41E0-A0EC-1B2D55560D6F</UserSecretsId>
     <LangVersion>7.1</LangVersion>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
-    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
-    <Compile Remove="Data\Migrations\20190217144850_InitialCreate.cs" />
-    <Compile Remove="Data\Migrations\20190217144850_InitialCreate.Designer.cs" />
-    <Compile Remove="Data\Migrations\20190218111538_InitialCreate.cs" />
-    <Compile Remove="Data\Migrations\20190218111538_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20190218115159_InitialCreate.cs" />
-    <Compile Remove="Migrations\20190218115159_InitialCreate.Designer.cs" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.Spotify" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.7" PrivateAssets="All" />
     <PackageReference Include="SendGrid" Version="9.10.0" />
     <PackageReference Include="SpotifyAPI-NET" Version="2.19.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Identity\Services\" />
-    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
 </Project>
