@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-Duckify-F914A5AC-BD88-46DF-A200-117A6DF7EDCC</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
 

@@ -49,7 +49,8 @@ namespace Duckify {
                 }
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().AddRazorPagesOptions(options => {
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
@@ -98,6 +99,7 @@ namespace Duckify {
                 user = new IdentityUser() {
                     UserName = "test@test.test",
                     Email = "test@test.test",
+                    EmailConfirmed = true
                 };
                 await UserManager.CreateAsync(user, "P@ssword0");
             }

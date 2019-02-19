@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace Duckify.Areas.Identity.Pages.Account {
     [AllowAnonymous]
@@ -23,15 +24,14 @@ namespace Duckify.Areas.Identity.Pages.Account {
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null) {
-            Response.Cookies.Delete("SpotifyToken");
+            if (Request.Cookies.ContainsKey("SpotifyToken")) {
+                Response.Cookies.Delete("SpotifyToken");
+            }
 
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            if (returnUrl != null) {
-                return LocalRedirect(returnUrl);
-            } else {
-                return Page();
-            }
+            return LocalRedirect("/");
+
         }
     }
 }

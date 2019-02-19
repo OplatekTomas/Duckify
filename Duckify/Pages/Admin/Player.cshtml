@@ -1,0 +1,31 @@
+﻿@page
+@model Duckify.Pages.Admin.PlayerModel
+@{
+    ViewData["Title"] = "Player";
+}
+
+<div class="h-100">
+    @{
+        if (!Request.Cookies.ContainsKey("SpotifyToken")) {
+            <p>@ViewData[""]</p>
+
+            <div class="row h-100 justify-content-center align-items-center">
+                <div class="col-12">
+                    <h1 class="text-center">Please login to your Spotify account to continue</h1>
+
+                    <form class="col-12 text-center" method="POST">
+                        <button class="btn" type="submit" asp-page-handler="SpotifyLogin">Login</button>
+                    </form>
+                </div>
+            </div>
+
+        } else {
+            <p class="text-center">User token is: @Model.GetToken()</p>
+
+        }
+    }
+</div>
+
+
+
+
