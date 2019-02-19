@@ -71,8 +71,11 @@ namespace Duckify.Areas.Identity.Pages.Account {
             if (result.Succeeded) {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
 
-                var token = info.AuthenticationTokens.First(x => x.Name == "access_token").Value;
-                Response.Cookies.Append("SpotifyToken", token, new CookieOptions { Secure = true, HttpOnly = true });
+                if (info.LoginProvider == "Spotify") {
+                    var token = info.AuthenticationTokens.First(x => x.Name == "access_token").Value;
+                    Response.Cookies.Append("SpotifyToken", token, new CookieOptions { Secure = true, HttpOnly = true });
+                }
+
 
                 return LocalRedirect(returnUrl);
             }
@@ -100,16 +103,17 @@ namespace Duckify.Areas.Identity.Pages.Account {
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
-            
             if (ModelState.IsValid) {
-                var user = new IdentityUser { UserName = info.Principal.Identity.Name, Email = Input.Email };
+                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded) {
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded) {
 
-                        var token = info.AuthenticationTokens.First(x => x.Name == "access_token").Value;
-                        Response.Cookies.Append("SpotifyToken", token, new CookieOptions { Secure = true, HttpOnly = true });
+                        if (info.LoginProvider == "Spotify") {
+                            var token = info.AuthenticationTokens.First(x => x.Name == "access_token").Value;
+                            Response.Cookies.Append("SpotifyToken", token, new CookieOptions { Secure = true, HttpOnly = true });
+                        }
 
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
