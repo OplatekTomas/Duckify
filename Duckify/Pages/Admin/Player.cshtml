@@ -3,28 +3,35 @@
 @{
     ViewData["Title"] = "Player";
 }
+@section Scripts
+    {
+    <script src="@Url.Content("/js/player.js")"></script>
+}
 
-<div class="h-100">
-    @{
-        if (!Request.Cookies.ContainsKey("SpotifyToken")) {
-            <p>@ViewData[""]</p>
 
-            <div class="row h-100 justify-content-center align-items-center">
-                <div class="col-12">
-                    <h1 class="text-center">Please login to your Spotify account to continue</h1>
+    <div class="h-100">
+        @{
+            if (!Request.Cookies.ContainsKey("SpotifyToken")) {
+                <div class="row h-100 justify-content-center align-items-center">
+                    <div class="col-12">
+                        <h1 class="text-center">Please login to your Spotify account to continue</h1>
 
-                    <form class="col-12 text-center" method="POST">
-                        <button class="btn" type="submit" asp-page-handler="SpotifyLogin">Login</button>
-                    </form>
+                        <form class="col-12 text-center" method="POST">
+                            <button class="btn" type="submit" asp-page-handler="SpotifyLogin">Login</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-        } else {
-            <p class="text-center">User token is: @Model.GetToken()</p>
+            } else {
+                <p class="text-center">User token is: @Model.GetToken()</p>
+                <script>
+                var spotifyToken = "@Model.GetToken()";
+                </script>
+                <script src="https://sdk.scdn.co/spotify-player.js"></script>
 
+            }
         }
-    }
-</div>
+    </div>
 
 
 
