@@ -5,6 +5,28 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if (Spotify.IsInitialized) {
+        <form class="mx-2 my-auto d-inline w-100" id="searchForm">
+            <div class="input-group mb-3">
+                <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-warning" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+        <div id="searchResults"></div>
+        
+        @section scripts{
+            <script>
+                    $("#searchForm").submit(function (event) {
+                        $.get('/?handler=Search&query=' + $("#searchBox").val(), function (data) {
+                            $("#searchResults").html(data)
+                        });
+                        event.preventDefault();
+                    });
+            </script>
+        }
+    } else {
+        <p>There is no admin account connected.</p>
+    }
 </div>

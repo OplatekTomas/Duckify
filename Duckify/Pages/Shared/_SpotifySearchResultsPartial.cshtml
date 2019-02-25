@@ -1,0 +1,26 @@
+﻿@model List<SpotifySearchResult>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Name</th>
+            <th scope="col">Artist</th>
+            <th scope="col">Length</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var song in Model) {
+        <tr>
+            <td><img src="@song.ImageUrl" height="64" width="64" /></td>
+            <td class="align-middle">@song.Name</td>
+            <td class="align-middle">@song.Artists</td>
+            <td class="align-middle">@song.Length</td>
+            <td class="align-middle"><button class="btn btn-outline-success" >Add</button></td>
+
+        </tr>
+        }
+    </tbody>
+</table>
+

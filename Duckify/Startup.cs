@@ -96,14 +96,14 @@ namespace Duckify {
             }
 
             //TODO: Change these for prod.
-            IdentityUser user = await UserManager.FindByEmailAsync("test@test.test");
+            IdentityUser user = await UserManager.FindByEmailAsync("admin@example.com");
             if (user == null) {
                 user = new IdentityUser() {
-                    UserName = "test@test.test",
-                    Email = "test@test.test",
+                    UserName = "admin@example.com",
+                    Email = "admin@example.com",
                     EmailConfirmed = true
                 };
-                await UserManager.CreateAsync(user, "P@ssword0");
+                await UserManager.CreateAsync(user, "Password0.");
             }
             await UserManager.AddToRoleAsync(user, "Admin");
 

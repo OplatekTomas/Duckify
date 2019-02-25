@@ -3,38 +3,65 @@
 @{
     ViewData["Title"] = "Player";
 }
-@section Scripts
-    {
-    <script src="@Url.Content("/js/player.js")"></script>
-}
 
 
-    <div class="h-100">
-        @{
-            if (!Request.Cookies.ContainsKey("SpotifyToken")) {
-                <div class="row h-100 justify-content-center align-items-center">
-                    <div class="col-12">
-                        <h1 class="text-center">Please login to your Spotify account to continue</h1>
 
-                        <form class="col-12 text-center" method="POST">
-                            <button class="btn" type="submit" asp-page-handler="SpotifyLogin">Login</button>
-                        </form>
+<div class="h-100">
+    @{
+        if (!Spotify.IsInitialized) {
+            <div class="row h-100 justify-content-center align-items-center">
+                <div class="col-12">
+                    <h1 class="text-center">Please login to your Spotify account to continue</h1>
+
+                    <form class="col-12 text-center" method="POST">
+                        <button class="btn" type="submit" asp-page-handler="SpotifyLogin">Login</button>
+                    </form>
+                </div>
+            </div>
+
+        } else {
+            <form class="col-12 text-center" method="POST">
+                <button class="btn" type="submit" asp-page-handler="SpotifyLogout">Logout</button>
+            </form>
+            <form class="mx-2 my-auto d-inline w-100" id="searchForm">
+                <div class="input-group mb-3">
+                    <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-warning" type="submit">Search</button>
                     </div>
                 </div>
-
-            } else {
-                <p class="text-center">User token is: @Model.GetToken()</p>
-                <form>
-                    
-                </form>
+            </form>
+            <div id="searchResults"></div>
+            @section scripts{
+                <script src="@Url.Content("/js/player.js")"></script>
                 <script>
-                    var spotifyToken = "@Model.GetToken()";
+                    var spotifyToken = "@Spotify.Client.AccessToken";
+                    $("#searchForm").submit(function (event) {
+                        $.get('/Admin/Player?handler=Search&query=' + $("#searchBox").val(), function (data) {
+                            $("#searchResults").html(data)
+                        });                 
+                        event.preventDefault();
+                    });
+                    function goodbye(e) {
+                        if (!e) e = window.event;
+                        //e.cancelBubble is supported by IE - this will kill the bubbling process.
+                        e.cancelBubble = true;
+                        e.returnValue = 'Playback will STOP if you leave.'; //This is displayed on the dialog                 
+                        //e.stopPropagation works in Firefox.
+                        if (e.stopPropagation) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                    }
+                    window.onbeforeunload = goodbye;
                 </script>
                 <script src="https://sdk.scdn.co/spotify-player.js"></script>
-
             }
+
+
         }
-    </div>
+    }
+</div>
 
 
 
