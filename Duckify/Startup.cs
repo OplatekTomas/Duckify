@@ -15,7 +15,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Duckify.Services;
-using FluentSpotifyApi.Extensions;
 
 namespace Duckify {
     public class Startup {

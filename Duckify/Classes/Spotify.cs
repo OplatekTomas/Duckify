@@ -2,14 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentSpotifyApi.Client;
-using FluentSpotifyApi.Core.Client;
+using SpotifyAPI.Web;
 
-namespace Duckify.Classes {
+namespace Duckify {
     public class Spotify {
-        
-        public static void Init() {
-            
+
+        public static SpotifyWebAPI Client { get; set; }
+        public static bool IsInitialized { get; set; } = false;
+
+        public static void Init(string token) {
+            if (!IsInitialized) {
+                SpotifyWebAPI api = new SpotifyWebAPI() {
+                    TokenType = "Bearer",
+                    AccessToken = token
+                };
+                IsInitialized = true;
+            }
         }
 
     }

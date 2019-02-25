@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Duckify.Pages.Admin {
-    [Authorize(Roles ="Admin")]
+
+    [Authorize(Roles = "Admin")]
     public class PlayerModel : PageModel {
 
         public PlayerModel(SignInManager<IdentityUser> signInManager) {
@@ -17,9 +18,6 @@ namespace Duckify.Pages.Admin {
         }
 
         public SignInManager<IdentityUser> _signInManager;
-
-        [TempData]
-        public string StatusMessage { get; set; }
 
         public void OnGet() {
 
@@ -42,6 +40,7 @@ namespace Duckify.Pages.Admin {
             }
             var token = info.AuthenticationTokens.First(x => x.Name == "access_token").Value;
             Response.Cookies.Append("SpotifyToken", token, new CookieOptions { Secure = true, HttpOnly = true });
+            Spotify.Init(token); ; ;
             return LocalRedirect("/Admin/Player");
         }
 
