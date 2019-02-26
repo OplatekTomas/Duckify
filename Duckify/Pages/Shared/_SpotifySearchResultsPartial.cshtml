@@ -2,21 +2,26 @@
 
 <table class="table">
     <thead>
-        <tr>
+        <tr class="">
             <th scope="col"></th>
-            <th scope="col">Name</th>
-            <th scope="col">Artist</th>
-            <th scope="col">Length</th>
-            <th scope="col">Action</th>
+            <th scope="col" width="70%" class="">Name</th>
+            <th scope="col" width="15%" class="d-none d-sm-table-cell">Length</th>
+            <th scope="col" width="15%" class="" >Action</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var song in Model) {
         <tr>
-            <td><img src="@song.ImageUrl" height="64" width="64" /></td>
-            <td class="align-middle">@song.Name</td>
-            <td class="align-middle">@song.Artists</td>
-            <td class="align-middle">@song.Length</td>
+            <td width="96"><img src="@song.ImageUrl" height="64" width="64" /></td>
+            <td class="align-middle demo">
+                <div>
+                    <span class="font-weight-bold">@song.Name</span>
+                </div>
+                <div>
+                    <span>@song.Artists</span>
+                </div>
+            </td>
+            <td class="d-none d-sm-table-cell align-middle">@song.Length</td>
             <td class="align-middle"><button class="btn btn-outline-success" >Add</button></td>
 
         </tr>

@@ -61,3 +61,14 @@ body {
 .footer-offset{
     height: 60px;
 }
+
+.table td.demo span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.table td.demo {
+    max-width: 0px;
+}

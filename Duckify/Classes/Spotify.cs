@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json.Linq;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Enums;
@@ -12,6 +14,7 @@ namespace Duckify {
     public class Spotify {
 
         public static SpotifyWebAPI Client { get; set; }
+        private static Dictionary<string, QueueItem> SongQueue { get; set; }
         public static bool IsInitialized { get; set; } = false;
         private static Timer _refreshTimer;
 
@@ -45,6 +48,27 @@ namespace Duckify {
                 results.Add(new SpotifySearchResult(item));
             }
             return results;
+        }
+
+        public async static Task<bool> AddToQueue(string songId, string addedBy) {
+            if (songId == null) {
+                return false;
+            }    
+            if (SongQueue.ContainsKey(songId)) {
+                if (SongQueue[songId].LikedBy.Contains(addedBy)) {
+                    return false;
+                }
+                SongQueue[songId].Likes++;
+                SongQueue[songId].LikedBy.Add(addedBy);
+                SongQueue = SongQueue.OrderByDescending(x => x.Value.Likes).ToDictionary(x => x.Key, x => x.Value);
+                return true;
+            }
+            var track = await Client.GetTrackAsync(songId);
+            if (track.HasError()) {
+                return false;
+            }
+            SongQueue.Add(songId, new QueueItem(track, addedBy));
+            return true;       
         }
 
         private static void StartTimer(string refreshToken) {

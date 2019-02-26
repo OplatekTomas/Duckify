@@ -26,4 +26,24 @@ namespace Duckify {
             Artists = track.Artists.Select(x => x.Name).ConvertToString();
         }
     }
+
+    public class QueueItem {
+        public FullTrack Track { get; set; }
+        public string AddedBy { get; set; }
+        public List<string> LikedBy { get; set; } = new List<string>();
+        public int Likes { get; set; }
+        public string Length { get; set; }
+
+        public QueueItem(FullTrack track, string addedBy = null) {
+            Track = track;
+            Length = Helper.ConvertMsToReadable(track.DurationMs);
+            addedBy = addedBy ?? "Anon";
+            AddedBy = addedBy;
+            LikedBy.Add(addedBy);
+            Likes = 0;
+        }
+    }
+
 }
+
+

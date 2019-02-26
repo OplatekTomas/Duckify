@@ -9,10 +9,9 @@
         if (!Spotify.IsInitialized) {
             <div class="row h-100 justify-content-center align-items-center">
                 <div class="col-12">
-                    <h1 class="text-center mb-4 mt-5">Please login to your Spotify account to continue</h1>
-
+                    <h1 class="text-center mb-4 mt-5">Login to Spotify to continue</h1>
                     <form class="mt-4 text-center" method="POST">
-                        <button class="btn" type="submit" asp-page-handler="SpotifyLogin">Login</button>
+                        <button class="btn btn-outline-success" type="submit" asp-page-handler="SpotifyLogin">Login</button>
                     </form>
                 </div>
             </div>
