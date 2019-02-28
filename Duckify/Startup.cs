@@ -48,8 +48,11 @@ namespace Duckify {
                     options.Scope.Add(scope);
                 }
             });
-
-
+            services.AddSession(options => {
+                // Set a short timeout for easy testing.
+                options.IdleTimeout = TimeSpan.FromHours(6);
+                options.Cookie.HttpOnly = true;
+            });
             services.AddMvc().AddRazorPagesOptions(options => {
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -74,7 +77,7 @@ namespace Duckify {
             app.UseCookiePolicy();
 
             app.UseAuthentication();
-
+            app.UseSession();
             app.UseMvc();
 
             CreateDefaultAdmin(srv).Wait();

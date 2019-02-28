@@ -5,6 +5,7 @@
 }
 
 <div class="text-center">
+   
     @if (Spotify.IsInitialized) {
         <form class="mx-2 my-auto d-inline w-100" id="searchForm">
             <div class="input-group mb-3">
@@ -16,7 +17,15 @@
         </form>
         <div id="searchResults"></div>
         
-        @section scripts{
+    } else {
+        <p>There is no admin account connected.</p>
+    }
+    @section scripts{
+        @if(!Request.Cookies.ContainsKey("HasToken")){
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+          <script onload="runGenerator();" type="text/javascript" src="@Url.Content("/js/tokenizer.js")"></script>
+        }
+        @if(!Spotify.IsInitialized) {
             <script>
                     $("#searchForm").submit(function (event) {
                         $.get('/?handler=Search&query=' + $("#searchBox").val(), function (data) {
@@ -26,7 +35,5 @@
                     });
             </script>
         }
-    } else {
-        <p>There is no admin account connected.</p>
     }
 </div>
