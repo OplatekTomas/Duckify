@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace Duckify {
     public class Auth {
@@ -29,6 +30,12 @@ namespace Duckify {
         public Auth() {
             Key = GetRandomString();
             Vector = GetRandomString();
+        }
+
+        public static bool IsUserAuthorized(HttpContext context, Auth auth, IdentityUser user) {
+            
+
+            return false;
         }
 
         public (bool validated, string token) ValidateToken(string token, string ip) {
@@ -67,18 +74,7 @@ namespace Duckify {
             var key = Encoding.UTF8.GetBytes(Key);
             var iv = Encoding.UTF8.GetBytes(Vector);
 
-            if (cipherText == null || cipherText.Length <= 0) {
-                throw new ArgumentNullException("cipherText");
-            }
-            if (key == null || key.Length <= 0) {
-                throw new ArgumentNullException("key");
-            }
-            if (iv == null || iv.Length <= 0) {
-                throw new ArgumentNullException("key");
-            }
-
             string plaintext = null;
-
             using (var rijndael = new RijndaelManaged()) {
                 rijndael.Mode = CipherMode.CBC;
                 rijndael.Padding = PaddingMode.PKCS7;

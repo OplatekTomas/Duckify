@@ -12,6 +12,7 @@ namespace Duckify.Pages {
     public class IndexModel : PageModel {
 
         public void OnGet() {
+            
             HttpContext.Session.Set("init", new byte[] { 0x20 });
         }
 

@@ -1,8 +1,12 @@
 
 function runGenerator() {
-    if (!setUniqueToken()) {
-        alert("Server was not able to authenticate you (Sorry). This means you won't be able to like or add songs");
-    }
+    var cookie = getCookie(".AspNet.Consent");
+    setUniqueToken().done(function (result) {
+        if (cookie !== null && !result) {
+            alert("Server was not able to authenticate you (Sorry). This means you won't be able to like or add songs");
+        }
+    });
+
 
 }
 
@@ -26,7 +30,6 @@ function setUniqueToken() {
             });
         }
     });
-    return false;
 }
 
 
