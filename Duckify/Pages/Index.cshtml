@@ -4,7 +4,7 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
+<div>
    
     @if (Spotify.IsInitialized) {
         <form class="mx-2 my-auto d-inline w-100" id="searchForm">
@@ -16,7 +16,8 @@
             </div>
         </form>
         <div id="searchResults"></div>
-        
+        <div id="queueResults"></div>
+
     } else {
         <p>There is no admin account connected.</p>
     }
@@ -25,14 +26,21 @@
           <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
           <script onload="runGenerator();" type="text/javascript" src="@Url.Content("/js/tokenizer.js")"></script>
         }
-        @if(!Spotify.IsInitialized) {
+        @if(Spotify.IsInitialized) {
             <script>
-                    $("#searchForm").submit(function (event) {
-                        $.get('/?handler=Search&query=' + $("#searchBox").val(), function (data) {
-                            $("#searchResults").html(data)
-                        });
-                        event.preventDefault();
+                document.onload = setInterval(function(){
+                    $.get('/?handler=GetQueue', function (data) {
+                        $("#queueResults").html("")
+                        $("#queueResults").html(data)
+                    });       
+
+                }, 1500);
+                $("#searchForm").submit(function (event) {
+                    $.get('/?handler=Search&query=' + $("#searchBox").val(), function (data) {
+                        $("#searchResults").html(data)
                     });
+                    event.preventDefault();
+                });
             </script>
         }
     }

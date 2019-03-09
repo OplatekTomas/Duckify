@@ -29,9 +29,19 @@
                 </div>
             </form>
             <div id="searchResults"></div>
+            <div id="queueResults"></div>
+
             @section scripts{
                 <script src="@Url.Content("/js/player.js")"></script>
                 <script>
+                    document.onload = setInterval(function(){
+                        $.get('/Admin/Player?handler=GetQueue', function (data) {
+                            $("#queueResults").html("")
+                            $("#queueResults").html(data)
+                        });       
+
+                    }, 1500);
+                    
                     var spotifyToken = "@Spotify.Client.AccessToken";
                     $("#searchForm").submit(function (event) {
                         $.get('/Admin/Player?handler=Search&query=' + $("#searchBox").val(), function (data) {

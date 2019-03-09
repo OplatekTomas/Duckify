@@ -14,7 +14,7 @@ namespace Duckify {
     public class Spotify {
 
         public static SpotifyWebAPI Client { get; set; }
-        private static Dictionary<string, QueueItem> SongQueue { get; set; }
+        private static Dictionary<string, QueueItem> SongQueue { get; set; } = new Dictionary<string, QueueItem>();
         public static bool IsInitialized { get; set; } = false;
         private static Timer _refreshTimer;
 
@@ -38,6 +38,14 @@ namespace Duckify {
             Client = null;
         }
 
+        public static List<QueueItemResult> GetQueueItems(string token) {
+            List<QueueItemResult> results = new List<QueueItemResult>();
+            foreach (var item in SongQueue.Values) {
+                results.Add(new QueueItemResult(item, token));
+            }
+            return results;
+        }
+
         public static async Task<List<SpotifySearchResult>> SearchTracks(string query) {
             var apiResult = await Client.SearchItemsAsync(query, SearchType.Track, 10);
             if (apiResult.Error != null || apiResult.Tracks.Error != null) {
@@ -53,7 +61,7 @@ namespace Duckify {
         public async static Task<bool> AddToQueue(string songId, string addedBy) {
             if (songId == null) {
                 return false;
-            }    
+            }
             if (SongQueue.ContainsKey(songId)) {
                 if (SongQueue[songId].LikedBy.Contains(addedBy)) {
                     return false;
@@ -68,7 +76,7 @@ namespace Duckify {
                 return false;
             }
             SongQueue.Add(songId, new QueueItem(track, addedBy));
-            return true;       
+            return true;
         }
 
         private static void StartTimer(string refreshToken) {

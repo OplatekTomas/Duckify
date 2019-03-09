@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Duckify.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -67,9 +68,36 @@ namespace Duckify.Pages.Admin {
             };
             return partialView;
         }
-
-        public string GetToken() {
-            return Request.Cookies["SpotifyToken"];
+        public PartialViewResult OnGetGetQueue() {
+            string token = "";
+            if (User.Identity.IsAuthenticated) {
+                token = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            } else {
+                token = HttpContext.Session.GetString("Token");
+            }
+            var result = Spotify.GetQueueItems(token);
+            var partialView = new PartialViewResult() {
+                ViewName = "_QueuePartial",
+                ViewData = new ViewDataDictionary<List<QueueItemResult>>(ViewData, result)
+            };
+            return partialView;
         }
+        public async Task<IActionResult> OnGetAddSong(string id) {
+            bool canLike = User.Identity.IsAuthenticated;
+            string token = "";
+            if (!canLike) {
+                token = HttpContext.Session.GetString("Token");
+                canLike = Auth.IsAuthorized(token);
+            } else {
+                token = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+            if (canLike) {
+                await Spotify.AddToQueue(id, token);
+            }
+            return new JsonResult(true);
+
+        }
+
+
     }
 }

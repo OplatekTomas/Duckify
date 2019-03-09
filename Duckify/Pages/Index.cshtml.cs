@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Duckify.Pages {
     public class IndexModel : PageModel {
 
         public void OnGet() {
-            
+
             HttpContext.Session.Set("init", new byte[] { 0x20 });
         }
 
@@ -50,6 +51,36 @@ namespace Duckify.Pages {
                 Response.Cookies.Append("HasToken", "true");
             }
             return new JsonResult(result.validated);
+        }
+        public PartialViewResult OnGetGetQueue() {
+            string token = "";
+            if (User.Identity.IsAuthenticated) {
+                token = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            } else {
+                token = HttpContext.Session.GetString("Token");
+            }
+            var result = Spotify.GetQueueItems(token);
+            var partialView = new PartialViewResult() {
+                ViewName = "_QueuePartial",
+                ViewData = new ViewDataDictionary<List<QueueItemResult>>(ViewData, result)
+            };
+            return partialView;
+        }
+        public async Task<IActionResult> OnGetAddSong(string id) {
+            bool canLike = User.Identity.IsAuthenticated;
+            string token = "";
+            bool result = false;
+            if (!canLike) {
+                token = HttpContext.Session.GetString("Token");
+                canLike = Auth.IsAuthorized(token);
+            } else {
+                token = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+            if (canLike) {
+                result = await Spotify.AddToQueue(id, token);
+            }
+            return new JsonResult(result);
+
         }
 
     }

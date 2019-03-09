@@ -27,6 +27,29 @@ namespace Duckify {
         }
     }
 
+    public class QueueItemResult : SpotifySearchResult {
+        public int Likes { get; set; }
+
+        public bool LikedByUser { get; set; }
+
+        public QueueItemResult() {
+
+        }
+
+        public QueueItemResult(QueueItem item, string token) {
+            var track = item.Track;
+            Id = track.Id;
+            Name = track.Name;
+            if (track.Album.Images.Count > 0) {
+                ImageUrl = track.Album.Images[0].Url;
+            }
+            Length = Helper.ConvertMsToReadable(track.DurationMs);
+            Artists = track.Artists.Select(x => x.Name).ConvertToString();
+            Likes = item.Likes;
+            LikedByUser = item.LikedBy.Contains(token);
+        }
+    }
+
     public class QueueItem {
         public FullTrack Track { get; set; }
         public string AddedBy { get; set; }
@@ -40,7 +63,7 @@ namespace Duckify {
             addedBy = addedBy ?? "Anon";
             AddedBy = addedBy;
             LikedBy.Add(addedBy);
-            Likes = 0;
+            Likes = 1;
         }
     }
 

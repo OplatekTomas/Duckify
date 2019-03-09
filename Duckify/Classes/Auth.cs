@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Text.RegularExpressions;
 
 namespace Duckify {
     public class Auth {
@@ -32,13 +33,16 @@ namespace Duckify {
             Vector = GetRandomString();
         }
 
-        public static bool IsUserAuthorized(HttpContext context, Auth auth, IdentityUser user) {
-            
-
-            return false;
+        public static bool IsAuthorized(string auth) {
+            if (!Auth.ValidUsers.ContainsKey(auth)) {
+                return false;
+            }
+            //TODO: Add checks that trigger themselfs at random
+            return true;
         }
 
         public (bool validated, string token) ValidateToken(string token, string ip) {
+            token = token.Replace(' ', '+');
             var decrypted = DecryptString(token);
             var contains = ValidUsers.Values.FirstOrDefault(x => x.DecryptedToken == decrypted);
             //This means that user with the same local and public IP address already accessed the app and will recieve exiting token.
@@ -46,6 +50,7 @@ namespace Duckify {
                 return (true, contains.Token);
             }
             //First validity check - make sure the format is valid
+
             var parts = decrypted.Split(':');
             if (parts.Count() != 2) {
                 return (false, null);
@@ -59,7 +64,7 @@ namespace Duckify {
             _ipAddress = ip;
             Token = token;
             DecryptedToken = decrypted;
-            ValidUsers.Add(decrypted, this);
+            ValidUsers.Add(token, this);
             return (true, token);
         }
 
@@ -69,7 +74,6 @@ namespace Duckify {
         }
 
         public string DecryptString(string token) {
-            token = token.Replace(' ', '+');
             var cipherText = Convert.FromBase64String(token);
             var key = Encoding.UTF8.GetBytes(Key);
             var iv = Encoding.UTF8.GetBytes(Vector);
