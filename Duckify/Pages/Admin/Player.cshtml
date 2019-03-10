@@ -17,6 +17,18 @@
             </div>
 
         } else {
+            <div>
+                <form>
+                    <tr></tr>
+                    <tr></tr>
+                </form>
+                <img class="d-inline" id="playerImageCover" width="15%"/>
+                <div class="w-75 ml-3">
+                      <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                </div>
+                
+            </div>
+            
             <form class="col-12 text-center" method="POST">
                 <button class="btn" type="submit" asp-page-handler="SpotifyLogout">Logout</button>
             </form>
@@ -33,6 +45,7 @@
 
             @section scripts{
                 <script src="@Url.Content("/js/player.js")"></script>
+                <script src="@Url.Content("/js/spotify-web-api.js")"></script>
                 <script>
                     document.onload = setInterval(function(){
                         $.get('/Admin/Player?handler=GetQueue', function (data) {
