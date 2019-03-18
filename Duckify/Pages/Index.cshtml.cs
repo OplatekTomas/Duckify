@@ -13,8 +13,10 @@ namespace Duckify.Pages {
     public class IndexModel : PageModel {
 
         public void OnGet() {
-
             HttpContext.Session.Set("init", new byte[] { 0x20 });
+            if (Request.Cookies["HasToken"] != null && HttpContext.Session.GetString("Token") == null) {
+                Response.Cookies.Delete("HasToken");
+            }
         }
 
         public async Task<PartialViewResult> OnGetSearch(string query) {

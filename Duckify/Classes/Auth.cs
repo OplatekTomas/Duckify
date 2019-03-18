@@ -34,6 +34,9 @@ namespace Duckify {
         }
 
         public static bool IsAuthorized(string auth) {
+            if (string.IsNullOrEmpty(auth)) {
+                return false;
+            }
             if (!Auth.ValidUsers.ContainsKey(auth)) {
                 return false;
             }
@@ -57,9 +60,9 @@ namespace Duckify {
             }
             //TODO: Second check - regex the shit out of the token
             //Third check - make sure the IP is not faked.
-            if (parts[1] != ip && ip != "::1") {
-                return (false, null);
-            }
+            //if ((parts[1] != ip || parts[0] != ip) && ip != "::1" && ip != "127.0.0.1") {
+            //    return (false, null);
+            //}
             //Checks have passed, create new entery in ValidUsers dictionary.
             _ipAddress = ip;
             Token = token;

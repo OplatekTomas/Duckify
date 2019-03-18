@@ -1,13 +1,11 @@
 
 function runGenerator() {
     var cookie = getCookie(".AspNet.Consent");
-    setUniqueToken().done(function (result) {
-        if (cookie !== null && !result) {
-            alert("Server was not able to authenticate you (Sorry). This means you won't be able to like or add songs");
-        }
-    });
-
-
+    if (cookie === null) {
+        alert("Please accept cookies");
+    } else {
+        setUniqueToken();
+    }
 }
 
 //I went full egyptian with this one. Do I feel ashamed? Yes.
@@ -17,14 +15,16 @@ function setUniqueToken() {
         //Filter out IPv6
         if (parts[0] > 0 && parts[0] < 256) {
             //Call ipify API for my public IP address. 
-            $.get('https://api.ipify.org?format=json', function (ipData, status) {
+            $.get('api/spotify/ip', function (ipData, status) {
                 //Ask server for a aes key and aes initialization vector.
                 $.get("?handler=Key", function (data) {
-                    var token = ip + ":" + ipData.ip;
+                    var token = ip + ":" + ipData;
                     var enc = Crypt(token, data.key, data.vector);
                     //Ask server to authenticate with encrypted token
                     $.get("?handler=Authenticate&token=" + enc, function (wasAuth) {
-                        return wasAuth;
+                        if (!wasAuth) {
+                            alert("Server was not able to authenticate you (Sorry). This means you won't be able to like or add songs");
+                        }
                     });
                 });
             });

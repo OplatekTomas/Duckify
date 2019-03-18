@@ -64,10 +64,17 @@ namespace Duckify {
             }
             if (SongQueue.ContainsKey(songId)) {
                 if (SongQueue[songId].LikedBy.Contains(addedBy)) {
-                    return false;
+                    SongQueue[songId].Likes--;
+                    SongQueue[songId].LikedBy.Remove(addedBy);
+                    if (SongQueue[songId].Likes == 0) {
+                        SongQueue.Remove(songId);
+                    }
+
+
+                } else {
+                    SongQueue[songId].Likes++;
+                    SongQueue[songId].LikedBy.Add(addedBy);
                 }
-                SongQueue[songId].Likes++;
-                SongQueue[songId].LikedBy.Add(addedBy);
                 SongQueue = SongQueue.OrderByDescending(x => x.Value.Likes).ToDictionary(x => x.Key, x => x.Value);
                 return true;
             }

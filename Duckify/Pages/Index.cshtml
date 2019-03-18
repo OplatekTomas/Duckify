@@ -28,6 +28,10 @@
         }
         @if(Spotify.IsInitialized) {
             <script>
+                 $.get('/?handler=GetQueue', function (data) {
+                        $("#queueResults").html("")
+                        $("#queueResults").html(data)
+                    });    
                 document.onload = setInterval(function(){
                     $.get('/?handler=GetQueue', function (data) {
                         $("#queueResults").html("")

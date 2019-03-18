@@ -47,5 +47,10 @@ namespace Duckify.API {
             return (true, token);
         }
 
+        [HttpGet("ip", Name = "GetIp")]
+        public async Task<string> GetIP() {
+            return HttpContext.Connection.RemoteIpAddress.ToString();
+        }
+
     }
 }

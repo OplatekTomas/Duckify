@@ -43,16 +43,16 @@
                 <td class="align-middle">
                     <form id="@song.Id Queue">
                         @if(@song.LikedByUser){
-                            <button class="btn btn-outline-danger" disabled>Like</button>
+                            <button class="btn btn-outline-danger">Unlike</button>
                         }else{
                             <button class="btn btn-outline-danger">Like</button>
                         }
                     </form>
                 </td>
                 <script>
-                    $("#@song.Id Queue").submit(function (event) {
-                        event.preventDefault();
+                    $("[id='@song.Id Queue']").submit(function (event) {
                         likeSong("@song.Id")  
+                        event.preventDefault();
                     });
                 </script>
             </tr>
