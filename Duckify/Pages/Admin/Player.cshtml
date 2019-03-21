@@ -47,15 +47,8 @@
                 <script src="@Url.Content("/js/player.js")"></script>
                 <script src="@Url.Content("/js/spotify-web-api.js")"></script>
                 <script>
-                    document.onload = setInterval(function(){
-                        $.get('/Admin/Player?handler=GetQueue', function (data) {
-                            $("#queueResults").html("")
-                            $("#queueResults").html(data)
-                        });       
-
-                    }, 1500);
-                    
                     var spotifyToken = "@Spotify.Client.AccessToken";
+                    document.onload = waitForElement();                  
                     $("#searchForm").submit(function (event) {
                         $.get('/Admin/Player?handler=Search&query=' + $("#searchBox").val(), function (data) {
                             $("#searchResults").html(data)

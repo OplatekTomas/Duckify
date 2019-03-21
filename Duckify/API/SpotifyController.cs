@@ -48,9 +48,19 @@ namespace Duckify.API {
         }
 
         [HttpGet("ip", Name = "GetIp")]
-        public async Task<string> GetIP() {
+        public string GetIP() {
             return HttpContext.Connection.RemoteIpAddress.ToString();
         }
+
+        [HttpGet("currentSong", Name = "GetCurrentSong")]
+        public JsonResult GetCurrentSong() {
+            var items = Spotify.GetQueueItems("");
+            if (items.Count == 0) {
+                return new JsonResult("");
+            }
+            return new JsonResult(Spotify.GetQueueItems("")[0]);
+        }
+
 
     }
 }

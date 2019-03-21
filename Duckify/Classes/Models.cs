@@ -11,6 +11,8 @@ namespace Duckify {
         public string ImageUrl { get; set; }
         public string Length { get; set; }
         public string Artists { get; set; }
+        public string Uri { get; set; }
+
 
         public SpotifySearchResult() {
 
@@ -24,6 +26,7 @@ namespace Duckify {
             }
             Length = Helper.ConvertMsToReadable(track.DurationMs);
             Artists = track.Artists.Select(x => x.Name).ConvertToString();
+            Uri = track.Uri;
         }
     }
 
