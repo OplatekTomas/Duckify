@@ -17,24 +17,25 @@
             </div>
 
         } else {
-            <div>
-                <form>
-                    <tr></tr>
-                    <tr></tr>
-                </form>
-                <img class="d-inline" id="playerImageCover" width="15%"/>
-                <div class="w-75 ml-3 d-inline-block">
-                    <button class="btn btn-outline-warning d-inline" onclick="pause()" id="pause">Pause</button>
-                    <button class="btn btn-outline-warning d-inline" onclick="next()">Next</button>
-                    <form class="d-inline" method="POST">
-                        <button class="btn btn-outline-warning" type="submit" asp-page-handler="SpotifyLogout">Logout</button>
-                    </form>
-                    <input type="range" min="1" max="100" value="50" class="slider" onchange="seek(this.value)" id="progressSlider">
+            <div class="shadow" id="player">
+                <img id="playerImageCover" />
+                <div id="playerControls">
+                    <div><b id="songName">Loading...</b></div>
+                    <div id="artistNames">&nbsp;</div>
+                    <div id="controlButtons">
+                        <button class="btn btn-warning d-inline btn-sm" onclick="pause()" id="pause">Pause</button>
+                        <button class="btn btn-warning d-inline btn-sm" onclick="next()">Next</button>
+                        <button class="btn btn-warning d-inline btn-sm" onclick="mute()">Mute</button>
+                        <form class="d-inline" method="POST" id="logoutButton">
+                            <button class="btn btn-outline-danger btn-sm" type="submit" asp-page-handler="SpotifyLogout">Logout</button>
+                        </form>
+                        <input type="range" min="1" max="100" value="50" class="slider" onchange="seek(this.value)" id="progressSlider">
 
+                    </div>
                 </div>
-                
+
             </div>
-            
+
             <form class="mx-2 my-auto d-inline w-100" id="searchForm">
                 <div class="input-group mb-3">
                     <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />
@@ -51,18 +52,18 @@
                 <script src="@Url.Content("/js/spotify-web-api.js")"></script>
                 <script>
                     var spotifyToken = "@Spotify.Client.AccessToken";
-                    document.onload = waitForElement();                  
+                    document.onload = waitForElement();
                     $("#searchForm").submit(function (event) {
                         $.get('/Admin/Player?handler=Search&query=' + $("#searchBox").val(), function (data) {
                             $("#searchResults").html(data)
-                        });                 
+                        });
                         event.preventDefault();
                     });
                     function goodbye(e) {
                         if (!e) e = window.event;
                         //e.cancelBubble is supported by IE - this will kill the bubbling process.
                         e.cancelBubble = true;
-                        e.returnValue = 'Playback will STOP if you leave.'; //This is displayed on the dialog                 
+                        e.returnValue = 'Playback will STOP if you leave.'; //This is displayed on the dialog
                         //e.stopPropagation works in Firefox.
                         if (e.stopPropagation) {
                             e.stopPropagation();

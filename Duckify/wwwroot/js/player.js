@@ -98,6 +98,19 @@ function pause() {
 }
 
 
+var origVolume;
+function mute() {
+    player.getVolume().then(function (data) {
+        if (data === null) {
+            player.setVolume(origVolume);
+        } else {
+            origVolume = data;
+            console.log(origVolume);
+            player.setVolume(0);
+        }
+    });
+}
+
 function play(data) {
     var json = {};
     json.uris = [data.uri];
@@ -124,6 +137,10 @@ function renderUI(data) {
         }
         document.getElementById("progressSlider").max = data.duration;
         document.getElementById("progressSlider").value = data.position;
+        document.getElementById("songName").innerText = data.track_window.current_track.name;
+        document.getElementById("artistNames").innerText = data.track_window.current_track.artists.map(function (elem) {
+            return elem.name;
+        }).join(", ");
 
     }
 }

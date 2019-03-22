@@ -9,13 +9,13 @@
 
 }else{
     <table class="table">
-        <thead>
+        <thead class="">
             <tr class="">
-                <th scope="col"></th>
+                <th scope="col" class=""></th>
                 <th scope="col" width="65%" class="">Name</th>
                 <th scope="col" width="10%" class="d-none d-sm-table-cell text-center">Length</th>
                 <th scope="col" width="10%" class="text-center">Upvotes</th>
-                <th scope="col" width="15%" class="">Action</th>
+                <th scope="col" width="10%" class="text-center">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -40,12 +40,12 @@
                 <td class="d-none d-sm-table-cell align-middle text-center">@song.Length</td>
                 <td class="align-middle text-center">@song.Likes</td>
 
-                <td class="align-middle">
+                <td class="text-center align-middle">
                     <form id="@song.Id Queue">
                         @if(@song.LikedByUser){
-                            <button class="btn btn-outline-danger">Unlike</button>
+                            <button class="btn btn-outline-danger btn-sm">Unlike</button>
                         }else{
-                            <button class="btn btn-outline-danger">Like</button>
+                            <button class="btn btn-outline-danger btn-sm">Like</button>
                         }
                     </form>
                 </td>
