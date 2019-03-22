@@ -20,16 +20,19 @@
             <div class="shadow" id="player">
                 <img id="playerImageCover" />
                 <div id="playerControls">
+                    <form class="d-inline" method="POST" id="logoutButton">
+                        <button class="btn-outline-dark btn-sm fas fa-sign-out-alt" type="submit" asp-page-handler="SpotifyLogout"></button>
+                    </form>
                     <div><b id="songName">Loading...</b></div>
                     <div id="artistNames">&nbsp;</div>
+
                     <div id="controlButtons">
-                        <button class="btn btn-warning d-inline btn-sm" onclick="pause()" id="pause">Pause</button>
-                        <button class="btn btn-warning d-inline btn-sm" onclick="next()">Next</button>
-                        <button class="btn btn-warning d-inline btn-sm" onclick="mute()">Mute</button>
-                        <form class="d-inline" method="POST" id="logoutButton">
-                            <button class="btn btn-outline-danger btn-sm" type="submit" asp-page-handler="SpotifyLogout">Logout</button>
-                        </form>
-                        <input type="range" min="1" max="100" value="50" class="slider" onchange="seek(this.value)" id="progressSlider">
+                        <button class="btn btn-outline-dark d-inline btn-sm fas fa-play" onclick="pause()" id="pause"></button>
+                        <button class="btn btn-outline-dark d-inline btn-sm fas fa-forward" onclick="next()"></button>
+                        <input type="range" min="1" max="100" value="50" class="slider d-inline" onchange="seek(this.value)" id="progressSlider">
+                        <span id="progressText">0:00/0:00</span>
+                        <button class="btn btn-outline-dark btn-sm fas fa-volume-up" id="mute" onclick="mute()"></button>
+
 
                     </div>
                 </div>
@@ -37,13 +40,15 @@
             </div>
 
             <form class="mx-2 my-auto d-inline w-100" id="searchForm">
-                <div class="input-group mb-3">
+                <div class="input-group">
                     <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />
                     <div class="input-group-append">
                         <button class="btn btn-outline-warning" type="submit">Search</button>
                     </div>
                 </div>
             </form>
+
+                 
             <div id="searchResults"></div>
             <div id="queueResults"></div>
 

@@ -103,10 +103,13 @@ function mute() {
     player.getVolume().then(function (data) {
         if (data === null) {
             player.setVolume(origVolume);
+            document.getElementById("mute").setAttribute("class", "btn btn-outline-dark btn-sm fas fa-volume-up");
+
         } else {
             origVolume = data;
-            console.log(origVolume);
             player.setVolume(0);
+            document.getElementById("mute").setAttribute("class", "btn btn-outline-dark btn-sm fas fa-volume-mute");
+
         }
     });
 }
@@ -127,17 +130,25 @@ function next() {
     });      
 }
 
+function convertTime(millis) {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+}
+
 function renderUI(data) {
     if (data !== null) {
         $("#playerImageCover").attr("src", data.track_window.current_track.album.images[0].url);
         if (data.paused) {
-            document.getElementById("pause").innerText = "Play";
+            document.getElementById("pause").setAttribute("class", "btn btn-outline-dark d-inline btn-sm fas fa-play");
         } else {
-            document.getElementById("pause").innerText = "Pause";
+            document.getElementById("pause").setAttribute("class", "btn btn-outline-dark d-inline btn-sm fas fa-pause");
         }
         document.getElementById("progressSlider").max = data.duration;
         document.getElementById("progressSlider").value = data.position;
         document.getElementById("songName").innerText = data.track_window.current_track.name;
+        document.getElementById("progressText").innerText = convertTime(data.position) +"/"+ convertTime(data.duration);
+
         document.getElementById("artistNames").innerText = data.track_window.current_track.artists.map(function (elem) {
             return elem.name;
         }).join(", ");

@@ -8,6 +8,10 @@ a.navbar-brand {
 }
 
 
+.button {
+    color: black;
+}
+
 .table thead > tr > th, .table tbody > tr > th, .table tfoot > tr > th, .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
     padding: 10px;
     line-height: 1.428571429;
@@ -32,18 +36,19 @@ thead {
 
 #playerControls {
     display: block;
-    padding: 4px 0;
+    padding: 18px 0;
     margin-left: 140px;
     height: 125px;
 }
 
 #logoutButton {
     float: right;
-    margin-right: 8px
+    margin-right: 8px;
+    padding-top: 8px;
 }
 
 #controlButtons{
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
 /* Sticky footer styles
@@ -116,7 +121,6 @@ body {
 
 .slider {
   -webkit-appearance: none;
-  width: 99%;
   height: 5px;
   border-radius: 3px;   
   background: #d3d3d3;
