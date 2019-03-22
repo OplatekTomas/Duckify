@@ -2,10 +2,26 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your Javascript code.
-window.onload = function setToken() {
 
+var light = "/lib/bootstrap/dist/css/bootstrap-light.css";
+var dark = "/lib/bootstrap/dist/css/bootstrap-dark.css";
+var darkTheme = null;
 
-};
+function switchTheme() {
+    if (darkTheme === null) {
+        darkTheme = partialTheme === "True" ? true : false;
+    }
+    if (!darkTheme) {
+        $('link[href="' + light + '"]').attr('href', dark);
+        document.getElementById("themeSwitcher").innerText = "Light theme";
+    } else {
+        $('link[href="' + dark + '"]').attr('href', light);
+        document.getElementById("themeSwitcher").innerText = "Dark theme";
 
+    }
+    darkTheme = !darkTheme;
+    document.cookie = "DarkTheme=" + darkTheme;
+
+}
 
 

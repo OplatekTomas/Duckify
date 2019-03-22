@@ -8,13 +8,13 @@
 
     @if (Spotify.IsInitialized) {
 
-    <div class="shadow" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
+    <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
         <img class="shadow" id="indexImageCover" />
         <div id="indexText" >
 
-            <div style=" padding: 20px 0;">
-                <div><b id="songName" style="font-size: 18px;">Loading...</b></div>
-                <div id="artistNames">&nbsp;</div>
+            <div style="padding: 20px 0;">
+                <div class="elip d-block"><span id="songName" style="font-size: 18px; font-weight:bold;">Loading...</span></div>
+                <div class="elip" ><span id="artistNames">&nbsp;</span></div>
             </div>
 
 
@@ -23,9 +23,9 @@
     </div>
         <form class="mx-3 my-auto d-inline w-100" id="searchForm">
             <div class=" input-group">
-                <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />
+                <input class="form-control bg-light" type="text" placeholder="Search songs" id="searchBox" />
                 <div class="input-group-append">
-                    <button class="btn btn-outline-warning" type="submit">Search</button>
+                    <button class="btn btn-outline-warning bg-light" type="submit">Search</button>
                 </div>
             </div>
         </form>

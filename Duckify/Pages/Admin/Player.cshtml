@@ -17,11 +17,11 @@
             </div>
 
         } else {
-            <div class="shadow" id="player">
+            <div class="shadow bg-light" id="player">
                 <img class="shadow" id="playerImageCover" />
                 <div id="playerControls">
                     <form class="d-inline" method="POST" id="logoutButton">
-                        <button class="btn-outline-dark btn-sm fas fa-sign-out-alt" type="submit" asp-page-handler="SpotifyLogout"></button>
+                        <button class="btn btn-outline-dark btn-sm fas fa-sign-out-alt" type="submit" asp-page-handler="SpotifyLogout"></button>
                     </form>
                     <div><b id="songName">Loading...</b></div>
                     <div id="artistNames">&nbsp;</div>
@@ -40,9 +40,9 @@
 
             <form class="mx-2 my-auto d-inline w-100" id="searchForm">
                 <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-warning" type="submit">Search</button>
+                    <input class="form-control bg-light" type="text" placeholder="Search songs" id="searchBox" />
+                    <div class="input-group-append ">
+                        <button class="btn btn-outline-warning bg-light" type="submit">Search</button>
                     </div>
                 </div>
             </form>

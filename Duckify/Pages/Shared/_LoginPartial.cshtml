@@ -1,23 +1,42 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
 
 <ul class="navbar-nav">
+    <!--<li class="nav-item nav-link custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input " id="customCheck1" onchange="switchTheme(this.checked)">
+        <label class="custom-control-label" for="customCheck1">Dark theme</label>
+    </li>-->
+    <li class="nav-item">
+        <script>
+            @{var cookies = HttpContextAccessor.HttpContext.Request.Cookies; bool useDark; }
+            @if (cookies.ContainsKey("DarkTheme") && cookies["DarkTheme"] == "true") {
+                 useDark = true;
+            } else {
+                useDark = false;
+            }
+            var partialTheme = "@useDark";
+        </script>
+        <a id="themeSwitcher" class="nav-link" href="#" onclick="switchTheme(); return false;">Switch theme</a>
+    </li>
+
     @if (SignInManager.IsSignedIn(User)) {
         <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-light">Logout</button>
+                <button type="submit" class="nav-link btn btn-link">Logout</button>
             </form>
         </li>
     } else {
         <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
     }
 </ul>
