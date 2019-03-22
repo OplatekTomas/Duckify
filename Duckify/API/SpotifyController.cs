@@ -54,11 +54,7 @@ namespace Duckify.API {
 
         [HttpGet("currentSong", Name = "GetCurrentSong")]
         public JsonResult GetCurrentSong() {
-            var items = Spotify.GetQueueItems("");
-            if (items.Count == 0) {
-                return new JsonResult("");
-            }
-            return new JsonResult(Spotify.GetQueueItems("")[0]);
+            return new JsonResult(Spotify.GetCurrentItem(""));
         }
 
 

@@ -98,6 +98,9 @@ namespace Duckify.Pages.Admin {
 
         }
 
+        public IActionResult OnGetNextSong() {
+            return new JsonResult(Spotify.QueueNextItem(""));
 
+        }
     }
 }

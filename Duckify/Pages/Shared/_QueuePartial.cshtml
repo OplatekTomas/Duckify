@@ -1,6 +1,6 @@
 @model List<QueueItemResult>
 
-@if(!(@Model.Count() > 0)){
+@if(@Model.Count() == 0 && Spotify.GetCurrentItem("") == null) {
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-12">
             <h1 id="noSongs" class="text-center mb-4 mt-5">There are no songs in queue right now</h1>

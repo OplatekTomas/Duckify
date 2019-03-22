@@ -8,9 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\**" />
     <Compile Remove="Scripts\**" />
+    <Content Remove="Controllers\**" />
     <Content Remove="Scripts\**" />
+    <EmbeddedResource Remove="Controllers\**" />
     <EmbeddedResource Remove="Scripts\**" />
+    <None Remove="Controllers\**" />
     <None Remove="Scripts\**" />
   </ItemGroup>
 
@@ -31,10 +35,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
     <PackageReference Include="SpotifyAPI.Web" Version="3.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

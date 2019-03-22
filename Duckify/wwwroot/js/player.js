@@ -6,7 +6,7 @@ function init() {
     api = new SpotifyWebApi();
     api.setAccessToken(token);
     $.get('/api/spotify/currentSong', function (data) {
-        if (data.id != null) {
+        if (data !== null) {
             startPlayback();
         }
     });
@@ -26,9 +26,9 @@ function renderView() {
     $.get('/Admin/Player?handler=GetQueue', function (data) {
         $("#queueResults").html("")
         $("#queueResults").html(data)
-        if (document.getElementById("noSongs") != null) {
+        if (document.getElementById("noSongs") !== null) {
             songsQueued = false;
-        } else if (songsQueued == false) {
+        } else if (songsQueued === false) {
             startPlayback();
             songsQueued = true;
         }
@@ -38,12 +38,7 @@ function renderView() {
 
 function startPlayback() {
     $.get('/api/spotify/currentSong', function (data) {
-        var json = {};
-        json.uris = ["spotify:track:" + data.id];
-        var test = JSON.stringify(json);
-        console.log(test);
-        api.play(json, function () {
-        });
+        play(data);
     });
 }
 
@@ -87,8 +82,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 function transferPlayback(device_id) {
     var array = [device_id];
-    api.transferMyPlayback(array, null, function (success, data) {
-        if (success == null) {
+    var json = {};
+    json.play = false;
+    api.transferMyPlayback(array, json, function (success, data) {
+        if (success === null) {
             window.setInterval(function () {
                 player.getCurrentState().then(data => renderUI(data));
             }, 1000);
@@ -96,7 +93,43 @@ function transferPlayback(device_id) {
     });
 }
 
+function pause() {
+    player.togglePlay();
+}
+
+
+function play(data) {
+    var json = {};
+    json.uris = [data.uri];
+    api.play(json, function () {
+    });
+}
+
+function next() {
+    $.get('/Admin/Player?handler=NextSong', function (data) {
+        console.log(data);
+        if (data !== null) {
+            play(data);
+        }
+    });      
+}
+
 function renderUI(data) {
-    $("#playerImageCover").attr("src", data.track_window.current_track.album.images[0].url)
+    if (data !== null) {
+        $("#playerImageCover").attr("src", data.track_window.current_track.album.images[0].url);
+        if (data.paused) {
+            document.getElementById("pause").innerText = "Play";
+        } else {
+            document.getElementById("pause").innerText = "Pause";
+        }
+        document.getElementById("progressSlider").max = data.duration;
+        document.getElementById("progressSlider").value = data.position;
+
+    }
+}
+
+function seek(value) {
+    document.getElementById("progressSlider").value = value;
+    player.seek(value);
 
 }

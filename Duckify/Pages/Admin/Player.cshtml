@@ -23,15 +23,18 @@
                     <tr></tr>
                 </form>
                 <img class="d-inline" id="playerImageCover" width="15%"/>
-                <div class="w-75 ml-3">
-                      <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                <div class="w-75 ml-3 d-inline-block">
+                    <button class="btn btn-outline-warning d-inline" onclick="pause()" id="pause">Pause</button>
+                    <button class="btn btn-outline-warning d-inline" onclick="next()">Next</button>
+                    <form class="d-inline" method="POST">
+                        <button class="btn btn-outline-warning" type="submit" asp-page-handler="SpotifyLogout">Logout</button>
+                    </form>
+                    <input type="range" min="1" max="100" value="50" class="slider" onchange="seek(this.value)" id="progressSlider">
+
                 </div>
                 
             </div>
             
-            <form class="col-12 text-center" method="POST">
-                <button class="btn" type="submit" asp-page-handler="SpotifyLogout">Logout</button>
-            </form>
             <form class="mx-2 my-auto d-inline w-100" id="searchForm">
                 <div class="input-group mb-3">
                     <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />

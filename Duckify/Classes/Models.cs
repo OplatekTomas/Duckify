@@ -50,6 +50,7 @@ namespace Duckify {
             Artists = track.Artists.Select(x => x.Name).ConvertToString();
             Likes = item.Likes;
             LikedByUser = item.LikedBy.Contains(token);
+            Uri = item.Track.Uri;
         }
     }
 

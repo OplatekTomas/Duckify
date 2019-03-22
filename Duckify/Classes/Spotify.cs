@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Collections.Specialized;
 using System.Timers;
 using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json.Linq;
@@ -31,6 +32,7 @@ namespace Duckify {
         }
 
         public static void Terminate() {
+            SongQueue = new Dictionary<string, QueueItem>();
             IsInitialized = false;
             _refreshTimer.Stop();
             _refreshTimer.Close();
@@ -38,10 +40,29 @@ namespace Duckify {
             Client = null;
         }
 
+        public static QueueItemResult QueueNextItem(string token) {
+            if(SongQueue.Count <= 1) {
+                return null;
+            }
+            SongQueue.Remove(SongQueue.ElementAt(0).Key);
+            return new QueueItemResult(SongQueue.ElementAt(0).Value, token);
+        }
+
+        public static QueueItemResult GetCurrentItem(string token) {
+            if (SongQueue.Count == 0) {
+                return null;
+            }
+            return new QueueItemResult(SongQueue.ElementAt(0).Value, token);
+        }
+
+
         public static List<QueueItemResult> GetQueueItems(string token) {
             List<QueueItemResult> results = new List<QueueItemResult>();
             foreach (var item in SongQueue.Values) {
                 results.Add(new QueueItemResult(item, token));
+            }
+            if(results.Count > 0) {
+                results.RemoveAt(0);
             }
             return results;
         }
@@ -75,7 +96,7 @@ namespace Duckify {
                     SongQueue[songId].Likes++;
                     SongQueue[songId].LikedBy.Add(addedBy);
                 }
-                SongQueue = SongQueue.OrderByDescending(x => x.Value.Likes).ToDictionary(x => x.Key, x => x.Value);
+                SongQueue =SongQueue.OrderByDescending(x => x.Value.Likes).ToDictionary(x => x.Key, x => x.Value);
                 return true;
             }
             var track = await Client.GetTrackAsync(songId);

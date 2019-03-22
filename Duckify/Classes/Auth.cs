@@ -53,8 +53,8 @@ namespace Duckify {
                 return (true, contains.Token);
             }
             //First validity check - make sure the format is valid
-
-            var parts = decrypted.Split(':');
+        
+            var parts = decrypted.Split(':').Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
             if (parts.Count() != 2) {
                 return (false, null);
             }
