@@ -18,7 +18,7 @@
 
         } else {
             <div class="shadow" id="player">
-                <img id="playerImageCover" />
+                <img class="shadow" id="playerImageCover" />
                 <div id="playerControls">
                     <form class="d-inline" method="POST" id="logoutButton">
                         <button class="btn-outline-dark btn-sm fas fa-sign-out-alt" type="submit" asp-page-handler="SpotifyLogout"></button>
@@ -29,10 +29,9 @@
                     <div id="controlButtons">
                         <button class="btn btn-outline-dark d-inline btn-sm fas fa-play" onclick="pause()" id="pause"></button>
                         <button class="btn btn-outline-dark d-inline btn-sm fas fa-forward" onclick="next()"></button>
-                        <input type="range" min="1" max="100" value="50" class="slider d-inline" onchange="seek(this.value)" id="progressSlider">
+                        <input type="range" min="1" max="100" value="50" class="slider col-md-9 d-none d-md-inline" onchange="seek(this.value)" id="progressSlider">
                         <span id="progressText">0:00/0:00</span>
                         <button class="btn btn-outline-dark btn-sm fas fa-volume-up" id="mute" onclick="mute()"></button>
-
 
                     </div>
                 </div>

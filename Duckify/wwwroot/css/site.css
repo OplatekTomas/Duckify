@@ -8,10 +8,6 @@ a.navbar-brand {
 }
 
 
-.button {
-    color: black;
-}
-
 .table thead > tr > th, .table tbody > tr > th, .table tfoot > tr > th, .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
     padding: 10px;
     line-height: 1.428571429;
@@ -23,9 +19,16 @@ thead {
     border-top: hidden;
 }
 
+#indexImageCover {
+    float: left;
+    width: 100px;
+    height: 100px;
+    border-radius: 3px;
+}
 #playerImageCover {
     float: left;
     width: 125px;
+    border-radius: 3px;
 }
 
 #player{
@@ -33,6 +36,13 @@ thead {
     border-radius: 3px;
 }
 
+
+#indexText {
+    display: block;
+    padding: 2px 0;
+    margin-left: 115px;
+    height: 100px;
+}
 
 #playerControls {
     display: block;
@@ -44,6 +54,7 @@ thead {
 #logoutButton {
     float: right;
     margin-right: 8px;
+
 }
 
 #controlButtons{
@@ -116,6 +127,11 @@ body {
 }
 .table td.demo {
     max-width: 0px;
+}
+
+.padding-0 {
+    padding-right: 0;
+    padding-left: 0;
 }
 
 .slider {

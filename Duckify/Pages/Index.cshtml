@@ -5,10 +5,24 @@
 }
 
 <div>
-   
+
     @if (Spotify.IsInitialized) {
-        <form class="mx-2 my-auto d-inline w-100" id="searchForm">
-            <div class="input-group mb-3">
+
+    <div class="shadow" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
+        <img class="shadow" id="indexImageCover" />
+        <div id="indexText" >
+
+            <div style=" padding: 20px 0;">
+                <div><b id="songName" style="font-size: 18px;">Loading...</b></div>
+                <div id="artistNames">&nbsp;</div>
+            </div>
+
+
+       </div>
+
+    </div>
+        <form class="mx-3 my-auto d-inline w-100" id="searchForm">
+            <div class=" input-group">
                 <input class="form-control" type="text" placeholder="Search songs" id="searchBox" />
                 <div class="input-group-append">
                     <button class="btn btn-outline-warning" type="submit">Search</button>
@@ -22,21 +36,27 @@
         <p>There is no admin account connected.</p>
     }
     @section scripts{
-        @if(!Request.Cookies.ContainsKey("HasToken")){
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-          <script onload="runGenerator();" type="text/javascript" src="@Url.Content("/js/tokenizer.js")"></script>
+        @if (!Request.Cookies.ContainsKey("HasToken")) {
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+            <script onload="runGenerator();" type="text/javascript" src="@Url.Content("/js/tokenizer.js")"></script>
         }
-        @if(Spotify.IsInitialized) {
+        @if (Spotify.IsInitialized) {
+            <script src="@Url.Content("/js/indexjs.js")"></script>
             <script>
-                 $.get('/?handler=GetQueue', function (data) {
-                        $("#queueResults").html("")
-                        $("#queueResults").html(data)
-                    });    
-                document.onload = setInterval(function(){
+                render();
+                window.setInterval(function () {
+                    render();
+                }, 3000);
+                $('[data-toggle="tooltip"]').tooltip();   
+                $.get('/?handler=GetQueue', function (data) {
+                    $("#queueResults").html("")
+                    $("#queueResults").html(data)
+                });
+                document.onload = setInterval(function () {
                     $.get('/?handler=GetQueue', function (data) {
                         $("#queueResults").html("")
                         $("#queueResults").html(data)
-                    });       
+                    });
 
                 }, 1500);
                 $("#searchForm").submit(function (event) {

@@ -37,4 +37,8 @@
     <PackageReference Include="SpotifyAPI.Web" Version="3.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\NewFolder\" />
+  </ItemGroup>
+
 </Project>

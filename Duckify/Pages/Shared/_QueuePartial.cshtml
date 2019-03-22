@@ -14,7 +14,7 @@
                 <th scope="col" class=""></th>
                 <th scope="col" width="65%" class="">Name</th>
                 <th scope="col" width="10%" class="d-none d-sm-table-cell text-center">Length</th>
-                <th scope="col" width="10%" class="text-center">Upvotes</th>
+                <th scope="col" width="10%" class="text-center">Likes</th>
                 <th scope="col" width="10%" class="text-center">Action</th>
             </tr>
         </thead>
@@ -43,9 +43,9 @@
                 <td class="text-center align-middle">
                     <form id="@song.Id Queue">
                         @if(@song.LikedByUser){
-                            <button class="btn btn-outline-danger btn-sm">Unlike</button>
+                            <button class="btn btn-outline-danger fas fa-heart"></button>
                         }else{
-                            <button class="btn btn-outline-danger btn-sm">Like</button>
+                            <button class="btn btn-outline-danger far fa-heart"></button>
                         }
                     </form>
                 </td>

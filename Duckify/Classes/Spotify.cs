@@ -96,7 +96,8 @@ namespace Duckify {
                     SongQueue[songId].Likes++;
                     SongQueue[songId].LikedBy.Add(addedBy);
                 }
-                SongQueue =SongQueue.OrderByDescending(x => x.Value.Likes).ToDictionary(x => x.Key, x => x.Value);
+
+                SongQueue = SongQueue.Take(1).Concat(SongQueue.Skip(1).OrderBy(o => o.Value)).ToDictionary(x=>x.Key,x=>x.Value);
                 return true;
             }
             var track = await Client.GetTrackAsync(songId);
