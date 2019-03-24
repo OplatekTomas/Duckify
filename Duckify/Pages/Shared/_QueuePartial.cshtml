@@ -1,13 +1,13 @@
 @model List<QueueItemResult>
 
-@if(@Model.Count() == 0 && Spotify.GetCurrentItem("") == null) {
+@if(Model.Count() == 0 && Spotify.GetCurrentItem("") == null) {
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-12">
             <h1 id="noSongs" class="text-center mb-4 mt-5">There are no songs in queue right now</h1>
         </div>
      </div>
 
-}else{
+}else if(Model.Count() != 0){
     <table class="table">
         <thead class="">
             <tr class="">
@@ -60,6 +60,8 @@
         
         </tbody>
     </table>
+} else {
+    <h3 class="text-center mt-3">Queue is empty.&nbsp; Add more songs or playback will soon end.</h3>
 }
 
 

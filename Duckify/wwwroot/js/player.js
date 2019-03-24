@@ -24,8 +24,8 @@ function waitForElement() {
 
 function renderView() {
     $.get('/Admin/Player?handler=GetQueue', function (data) {
-        $("#queueResults").html("")
-        $("#queueResults").html(data)
+        $("#queueResults").html("");
+        $("#queueResults").html(data);
         if (document.getElementById("noSongs") !== null) {
             songsQueued = false;
         } else if (songsQueued === false) {
@@ -83,7 +83,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 function transferPlayback(device_id) {
     var array = [device_id];
     var json = {};
-    json.play = false;
+    json.play = true;
     api.transferMyPlayback(array, json, function (success, data) {
         if (success === null) {
             window.setInterval(function () {
@@ -144,6 +144,7 @@ function renderUI(data) {
         } else {
             document.getElementById("pause").setAttribute("class", "btn btn-outline-dark d-inline btn-sm fas fa-pause");
         }
+
         document.getElementById("progressSlider").max = data.duration;
         document.getElementById("progressSlider").value = data.position;
         document.getElementById("songName").innerText = data.track_window.current_track.name;
@@ -152,7 +153,9 @@ function renderUI(data) {
         document.getElementById("artistNames").innerText = data.track_window.current_track.artists.map(function (elem) {
             return elem.name;
         }).join(", ");
-
+        if ((data.duration - data.position) < 1500) {
+            next();
+        }
     }
 }
 

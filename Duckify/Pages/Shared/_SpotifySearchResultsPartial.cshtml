@@ -1,49 +1,54 @@
 ﻿@model List<SpotifySearchResult>
 
-<table class="table" id="searchTable">
-    <thead>
-        <tr class="">
-            <th scope="col"></th>
-            <th scope="col" width="70%" class="">Name</th>
-            <th scope="col" width="15%" class="d-none d-sm-table-cell">Length</th>
-            <th scope="col" width="15%" class="" >Action</th>
-        </tr>
-    </thead>
-    <tbody>
-         <script>
-            function likeSong(id){
-                $.get('?handler=AddSong&id=' + id , function (data) {
-                   
-                }); 
-            }
-        </script>
-        @foreach (var song in Model) {
-        <tr>
-            <td width="96"><img src="@song.ImageUrl" height="64" width="64" /></td>
-            <td class="align-middle demo">
-                <div>
-                    <span class="font-weight-bold">@song.Name</span>
-                </div>
-                <div>
-                    <span>@song.Artists</span>
-                </div>
-            </td>
-            <td class="d-none d-sm-table-cell align-middle">@song.Length</td>
-            <td class="align-middle">
-                <form id="@song.Id">
-                    <button class="btn btn-outline-success">Add</button>
-                </form>
-            </td>
+@if (Model.Count > 0) {
+    <table class="table" id="searchTable">
+        <thead>
+            <tr class="">
+                <th scope="col"></th>
+                <th scope="col" width="70%" class="">Name</th>
+                <th scope="col" width="15%" class="d-none d-sm-table-cell">Length</th>
+                <th scope="col" width="15%" class="">Action</th>
+            </tr>
+        </thead>
+        <tbody>
             <script>
+                function likeSong(id) {
+                    $.get('?handler=AddSong&id=' + id, function (data) {
+
+                    });
+                }
+            </script>
+            @foreach (var song in Model) {
+                <tr>
+                    <td width="96"><img src="@song.ImageUrl" height="64" width="64" /></td>
+                    <td class="align-middle demo">
+                        <div>
+                            <span class="font-weight-bold">@song.Name</span>
+                        </div>
+                        <div>
+                            <span>@song.Artists</span>
+                        </div>
+                    </td>
+                    <td class="d-none d-sm-table-cell align-middle">@song.Length</td>
+                    <td class="align-middle">
+                        <form id="@song.Id">
+                            <button class="btn btn-outline-success">Add</button>
+                        </form>
+                    </td>
+                    <script>
                 $("#@song.Id").submit(function (event) {
                     event.preventDefault();
                     likeSong("@song.Id");
-                    $("#searchTable").remove();               
+                    $("#searchTable").remove();
                 });
-            </script>
-        </tr>
-        }
-       
-    </tbody>
-</table>
+                    </script>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+} else {
+    <h4 class="text-center mb-5 mt-3">No results.</h4>
+}
+
 

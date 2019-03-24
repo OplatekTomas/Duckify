@@ -9,10 +9,8 @@
     @{var cookies = HttpContextAccessor.HttpContext.Request.Cookies; }
     @if (cookies.ContainsKey("DarkTheme") && cookies["DarkTheme"] == "true") {
         <link id="styleLink" rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-dark.css" />
-
     } else {
         <link id="styleLink" rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-light.css" />
-
     }
 
     <link rel="stylesheet" href="~/css/site.css" />
@@ -55,9 +53,9 @@
         <div class="footer-offset"> </div>
     </div>
 
-    <footer class="footer text-muted">
+    <footer class="footer card text-muted">
         <div class="container">
-            &copy; 2019 - Duckify - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2019 -  <a href="https://github.com/Kaharonus/Duckify"><i class="fab fa-github"></i> Duckify</a>  - <a asp-area="" asp-page="/Privacy">Privacy</a> - <a asp-area="" asp-page="/Licence">Licence</a>
         </div>
     </footer>
 

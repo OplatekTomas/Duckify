@@ -7,23 +7,19 @@
 <div>
 
     @if (Spotify.IsInitialized) {
+        <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
+            <img class="shadow" id="indexImageCover" />
+            <div id="indexText">
+                <div style="padding: 20px 0;">
+                    <div class="elip d-block"><span id="songName" style="font-size: 18px; font-weight:bold;">Loading...</span></div>
+                    <div class="elip"><span id="artistNames">&nbsp;</span></div>
+                </div>
 
-    <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
-        <img class="shadow" id="indexImageCover" />
-        <div id="indexText" >
-
-            <div style="padding: 20px 0;">
-                <div class="elip d-block"><span id="songName" style="font-size: 18px; font-weight:bold;">Loading...</span></div>
-                <div class="elip" ><span id="artistNames">&nbsp;</span></div>
             </div>
-
-
-       </div>
-
-    </div>
+        </div>
         <form class="mx-3 my-auto d-inline w-100" id="searchForm">
             <div class=" input-group">
-                <input class="form-control bg-light" type="text" placeholder="Search songs" id="searchBox" />
+                <input class="form-control bg-light text-light" type="text" placeholder="Search songs" id="searchBox" />
                 <div class="input-group-append">
                     <button class="btn btn-outline-warning bg-light" type="submit">Search</button>
                 </div>
@@ -33,7 +29,18 @@
         <div id="queueResults"></div>
 
     } else {
-        <p>There is no admin account connected.</p>
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-12">
+                <span class="mx-5">&nbsp;</span>
+                <h1 class="text-center mb-4 mt-5">Nobody is playing music right now</h1>
+                <h4 class="text-center">
+                    If you have admin access you can login and start playing now!
+                </h4>
+                <div class="mt-4 text-center ">
+                    <a class="btn btn-outline-warning" asp-page="/Admin/Player">Login</a>
+                </div>
+            </div>
+        </div>
     }
     @section scripts{
         @if (!Request.Cookies.ContainsKey("HasToken")) {
@@ -47,7 +54,7 @@
                 window.setInterval(function () {
                     render();
                 }, 3000);
-                $('[data-toggle="tooltip"]').tooltip();   
+                $('[data-toggle="tooltip"]').tooltip();
                 $.get('/?handler=GetQueue', function (data) {
                     $("#queueResults").html("")
                     $("#queueResults").html(data)
