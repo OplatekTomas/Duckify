@@ -13,9 +13,24 @@ using SpotifyAPI.Web.Enums;
 
 namespace Duckify {
     public class Spotify {
+        public class QueueCollection : KeyedCollection<string, QueueItem> {
+
+            // This is the only method that absolutely must be overridden,
+            // because without it the KeyedCollection cannot extract the
+            // keys from the items. The input parameter type is the 
+            // second generic type argument, in this case OrderItem, and 
+            // the return value type is the first generic type argument,
+            // in this case int.
+            //
+            protected override string GetKeyForItem(QueueItem item) {
+                // In this example, the key is the part number.
+                return item.Id;
+            }
+        }
+
 
         public static SpotifyWebAPI Client { get; set; }
-        private static Dictionary<string, QueueItem> SongQueue { get; set; } = new Dictionary<string, QueueItem>();
+        private static QueueCollection SongQueue { get; set; } = new QueueCollection();
         public static bool IsInitialized { get; set; } = false;
         private static Timer _refreshTimer;
 
@@ -32,7 +47,7 @@ namespace Duckify {
         }
 
         public static void Terminate() {
-            SongQueue = new Dictionary<string, QueueItem>();
+            SongQueue = new QueueCollection();
             IsInitialized = false;
             _refreshTimer.Stop();
             _refreshTimer.Close();
@@ -44,21 +59,21 @@ namespace Duckify {
             if(SongQueue.Count <= 1) {
                 return null;
             }
-            SongQueue.Remove(SongQueue.ElementAt(0).Key);
-            return new QueueItemResult(SongQueue.ElementAt(0).Value, token);
+            SongQueue.Remove(SongQueue[0]);
+            return new QueueItemResult(SongQueue[0], token);
         }
 
         public static QueueItemResult GetCurrentItem(string token) {
             if (SongQueue.Count == 0) {
                 return null;
             }
-            return new QueueItemResult(SongQueue.ElementAt(0).Value, token);
+            return new QueueItemResult(SongQueue[0], token);
         }
 
 
         public static List<QueueItemResult> GetQueueItems(string token) {
             List<QueueItemResult> results = new List<QueueItemResult>();
-            foreach (var item in SongQueue.Values) {
+            foreach (var item in SongQueue) {
                 results.Add(new QueueItemResult(item, token));
             }
             if(results.Count > 0) {
@@ -83,7 +98,7 @@ namespace Duckify {
             if (songId == null) {
                 return false;
             }
-            if (SongQueue.ContainsKey(songId)) {
+            if (SongQueue.Contains(songId)) {
                 if (SongQueue[songId].LikedBy.Contains(addedBy)) {
                     SongQueue[songId].Likes--;
                     SongQueue[songId].LikedBy.Remove(addedBy);
@@ -96,15 +111,17 @@ namespace Duckify {
                     SongQueue[songId].Likes++;
                     SongQueue[songId].LikedBy.Add(addedBy);
                 }
-
-                SongQueue = SongQueue.Take(1).Concat(SongQueue.Skip(1).OrderBy(o => o.Value)).ToDictionary(x=>x.Key,x=>x.Value);
+                var first = SongQueue[0];
+                SongQueue.RemoveAt(0);
+                SongQueue = SongQueue.OrderByDescending(x => x.Likes).ToQueue();
+                SongQueue.Insert(0, first);
                 return true;
             }
             var track = await Client.GetTrackAsync(songId);
             if (track.HasError()) {
                 return false;
             }
-            SongQueue.Add(songId, new QueueItem(track, addedBy));
+            SongQueue.Add(new QueueItem(track, addedBy));
             return true;
         }
 

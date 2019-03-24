@@ -55,6 +55,7 @@ namespace Duckify {
     }
 
     public class QueueItem {
+        public string Id;
         public FullTrack Track { get; set; }
         public string AddedBy { get; set; }
         public List<string> LikedBy { get; set; } = new List<string>();
@@ -62,6 +63,7 @@ namespace Duckify {
         public string Length { get; set; }
 
         public QueueItem(FullTrack track, string addedBy = null) {
+            Id = track.Id;
             Track = track;
             Length = Helper.ConvertMsToReadable(track.DurationMs);
             addedBy = addedBy ?? "Anon";

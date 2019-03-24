@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace Duckify {
     public static class Helper {
+        public static Spotify.QueueCollection ToQueue(this IEnumerable ien) {
+            var collection = new Spotify.QueueCollection();
+            foreach (var item in ien) {
+                collection.Add((QueueItem)item);
+            }
+            return collection;
+        }
+         
         public static string EncodeTo64(string toEncode) {
             byte[] toEncodeAsBytes = ASCIIEncoding.ASCII.GetBytes(toEncode);
             return Convert.ToBase64String(toEncodeAsBytes);
