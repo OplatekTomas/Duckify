@@ -1,13 +1,20 @@
 @model List<QueueItemResult>
 
-@if(Model.Count() == 0 && Spotify.GetCurrentItem("") == null) {
+@if (Model.Count() == 0 && Spotify.GetCurrentItem("") == null) {
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-12">
             <h1 id="noSongs" class="text-center mb-4 mt-5">There are no songs in queue right now</h1>
         </div>
-     </div>
+    </div>
 
-}else if(Model.Count() != 0){
+} else if (Model.Count() != 0) {
+    <script>
+        function likeSong(id) {
+            $.get('?handler=AddSong&id=' + id, function (data) {
+
+            });
+        }
+    </script>
     <table class="table">
         <thead class="">
             <tr class="">
@@ -19,45 +26,29 @@
             </tr>
         </thead>
         <tbody>
-            <script>
-                function likeSong(id){
-                    $.get('?handler=AddSong&id=' + id , function (data) {
-                    
-                    }); 
-                }
-            </script>
             @foreach (var song in Model) {
-            <tr>
-                <td width="96"><img src="@song.ImageUrl" height="64" width="64" /></td>
-                <td class="align-middle demo">
-                    <div>
-                        <span class="font-weight-bold">@song.Name</span>
-                    </div>
-                    <div>
-                        <span>@song.Artists</span>
-                    </div>
-                </td>
-                <td class="d-none d-sm-table-cell align-middle text-center">@song.Length</td>
-                <td class="align-middle text-center">@song.Likes</td>
-
-                <td class="text-center align-middle">
-                    <form id="@song.Id Queue">
-                        @if(@song.LikedByUser){
-                            <button class="btn btn-outline-danger fas fa-heart"></button>
-                        }else{
-                            <button class="btn btn-outline-danger far fa-heart"></button>
+                <tr>
+                    <td width="96"><img class="shadow" style="border-radius: 3px;" src="@song.ImageUrl" height="64" width="64" /></td>
+                    <td class="align-middle demo">
+                        <div>
+                            <span class="font-weight-bold">@song.Name</span>
+                        </div>
+                        <div>
+                            <span>@song.Artists</span>
+                        </div>
+                    </td>
+                    <td class="d-none d-sm-table-cell align-middle text-center">@song.Length</td>
+                    <td class="align-middle text-center">@song.Likes</td>
+                    <td class="text-center align-middle">
+                        @if (@song.LikedByUser) {
+                            <button class="btn btn-outline-danger fas fa-heart" onclick="likeSong('@song.Id');return false;"></button>
+                        } else {
+                            <button class="btn btn-outline-danger far fa-heart" onclick="likeSong('@song.Id');return false;"></button>
                         }
-                    </form>
-                </td>
-                <script>
-                    $("[id='@song.Id Queue']").submit(function (event) {
-                        likeSong("@song.Id")  
-                        event.preventDefault();
-                    });
-                </script>
-            </tr>
+                    </td>
+                </tr>
             }
-        
+
         </tbody>
     </table>
 } else {
