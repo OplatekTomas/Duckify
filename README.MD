@@ -26,6 +26,7 @@ Services like this exist. One example of those would be Festify or PlugDJ. None 
 * Security improvements. As I said before not all features are enabled now for anon users - I'm pushing for quick release instead of proper testing
 * Performance & network optimizations (mostly network)
 * Bug fixes (ofc)
-* Enable more admin features (adding entire playlists, removing songs)
+* Enable more admin only features (adding entire playlists, removing songs, ...)
+* Create animations for different elements
 
 It is still WIP so don't expect all features to work 100% right now.
