@@ -1,14 +1,31 @@
 # Duckify
 
-Have you ever been to a party or to a pub and went "Damn... this music sucks"? Yeah, lot of people did and they used Festify to change that.
+## What is this?
 
-Now... Have you ever been to a party or to a pub with bunch of IT people that figured in less then 10 minutes how to cheat Festify? 
+Essentially a jukebox. Everyone can join and play their music. Everyone can join and "like" a song. More liked songs play sooner.
 
-**Introducing Duckify**
+## Why?
 
-It is still WIP so don't expect all features to work right now.
+Services like this exist. One example of those would be Festify or PlugDJ. None of those unfortunately matched my requirements. Festify can be cheated easily and PlugDJ requieres you to create an account. 
+
 
 ## Features
 
-* Play any song from Spotify (there might be support for other platforms later)
-* Multiplatform (using ASP Net Core)
+* Play any song from Spotify
+* Build your own queue
+* Login with your own account (secured, pwd is strongly hashed)
+* Kinda sorta secured (Not all checks for anon users are in place right now, but the main ones are)
+* Multiplatform (using AspNet Core)
+* Supports both light and dark theme
+
+## Planed features (not ordered)
+
+* User favorites
+* Tie those favorites in with Spotify account
+* UI improvements. Some parts are clunky and/or bad
+* Security improvements. As I said before not all features are enabled now for anon users - I'm pushing for quick release instead of proper testing
+* Performance & network optimizations (mostly network)
+* Bug fixes (ofc)
+* Enable more admin features (adding entire playlists, removing songs)
+
+It is still WIP so don't expect all features to work 100% right now.
