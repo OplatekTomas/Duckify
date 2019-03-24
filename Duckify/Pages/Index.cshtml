@@ -5,16 +5,13 @@
 }
 
 <div>
-
+    <link rel="stylesheet" href="~/css/index.css" />
     @if (Spotify.IsInitialized) {
-        <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now" @if (Spotify.GetCurrentItem("") == null) { <text>style="display: none;"</text> }>
-
+        <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
             <img class="shadow" id="indexImageCover" />
             <div id="indexText">
-                <div style="padding: 20px 0;">
                     <div class="elip d-block"><span id="songName" style="font-size: 18px; font-weight:bold;">Loading...</span></div>
                     <div class="elip"><span id="artistNames">&nbsp;</span></div>
-                </div>
 
             </div>
         </div>

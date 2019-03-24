@@ -14,40 +14,21 @@ a.navbar-brand {
     vertical-align: top;
 }
 
-.elip {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    white-space: nowrap;
-    max-width: 100%;
-}
 
 thead {
     border-top: hidden;
 }
 
-#indexImageCover {
-    float: left;
-    width: 100px;
-    height: 100px;
-    border-radius: 3px;
-}
+
+
 #playerImageCover {
     float: left;
     width: 125px;
     border-radius: 3px;
 }
 
-#player{
+#player {
     border-radius: 3px;
-}
-
-
-#indexText {
-    display: block;
-    padding: 2px 0;
-    margin-left: 115px;
-    height: 100px;
 }
 
 #playerControls {
@@ -65,6 +46,10 @@ thead {
 
 #controlButtons{
     margin-top: 10px;
+}
+.padding-0 {
+    padding-right: 0;
+    padding-left: 0;
 }
 
 /* Sticky footer styles
@@ -124,11 +109,6 @@ body {
 }
 .table td.demo {
     max-width: 0px;
-}
-
-.padding-0 {
-    padding-right: 0;
-    padding-left: 0;
 }
 
 .slider {

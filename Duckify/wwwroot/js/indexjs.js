@@ -5,7 +5,9 @@ function render() {
 
     $.get('/api/spotify/currentSong', function (data) {
         if (data !== null) {
-            player.style.display = "block";
+            if (player.style.height !== 100) {
+                player.classList.add("playerFadeIn");
+            }
             if (oldData !== data) {
                 oldData = data;
                 document.getElementById("songName").innerText = data.name;
@@ -14,8 +16,9 @@ function render() {
 
             }
 
-        } else {
-            player.style.display = "none";
+        } else if (player.style.height !== 0) {
+            //player.classList.add("playerFadeOut");
+
         }
     });
 }

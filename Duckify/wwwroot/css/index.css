@@ -1,0 +1,53 @@
+﻿
+#player {
+    border-radius: 3px;
+    height: 0px;
+    overflow-wrap: break-word;
+}
+
+.playerFadeIn {
+    animation-name: fadeInPlayer;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+.playerFadeOut {
+    animation-name: fadeOutPlayer;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeInPlayer {
+    to {
+        height: 100px;
+        opacity: 1;
+    }
+}
+@keyframes fadeOutPlayer {
+
+    to {
+        height: 0px;
+        opacity: 0;
+    }
+}
+
+#indexImageCover {
+    float: left;
+    width: 100px;
+    border-radius: 3px;
+}
+
+
+#indexText {
+    display: block;
+    padding: 22px 0;
+    margin-left: 115px;
+}
+
+
+.elip {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 100%;
+}
