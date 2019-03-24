@@ -5,11 +5,6 @@ function init() {
     token = spotifyToken;
     api = new SpotifyWebApi();
     api.setAccessToken(token);
-    $.get('/api/spotify/currentSong', function (data) {
-        if (data !== null) {
-            startPlayback();
-        }
-    });
     setInterval(renderView, 1500);
 }
 
@@ -83,14 +78,22 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 function transferPlayback(device_id) {
     var array = [device_id];
     var json = {};
-    json.play = true;
-    api.transferMyPlayback(array, json, function (success, data) {
-        if (success === null) {
-            window.setInterval(function () {
-                player.getCurrentState().then(data => renderUI(data));
-            }, 1000);
+    $.get('/api/spotify/currentSong', function (data) {
+        if (data !== null) {
+            json.play = true;
+        } else {
+            json.play = false;
         }
+        api.transferMyPlayback(array, json, function (success, data) {
+            if (success === null) {
+                window.setInterval(function () {
+                    player.getCurrentState().then(data => renderUI(data));
+                }, 1000);
+            }
+        });
     });
+    
+   
 }
 
 function pause() {

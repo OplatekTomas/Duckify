@@ -7,7 +7,8 @@
 <div>
 
     @if (Spotify.IsInitialized) {
-        <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
+        <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now" @if (Spotify.GetCurrentItem("") == null) { <text>style="display: none;"</text> }>
+
             <img class="shadow" id="indexImageCover" />
             <div id="indexText">
                 <div style="padding: 20px 0;">
