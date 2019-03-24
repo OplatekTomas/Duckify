@@ -12,7 +12,8 @@ function render() {
                 oldData = data;
                 document.getElementById("songName").innerText = data.name;
                 document.getElementById("artistNames").innerText = data.artists;
-                $("#indexImageCover").attr("src", data.imageUrl);
+                document.getElementById("indexImageCover").style.backgroundImage = "url("+data.imageUrl+")";
+                
 
             }
 
