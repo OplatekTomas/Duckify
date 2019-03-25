@@ -24,4 +24,13 @@ function switchTheme() {
 
 }
 
+function likeSong(id) {
+    $("#searchResults").animate({ maxHeight: '0px', opacity: '0' }, 200, function () {
+        document.getElementById("searchResults").innerHTML = null;
+    });
+    $.get('?handler=AddSong&id=' + id, function (data) {
+
+    });
+}
+
 

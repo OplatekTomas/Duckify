@@ -9,7 +9,7 @@
 
 } else if (Model.Count() != 0) {
     <script>
-        function likeSong(id) {
+        function likeSongQueue(id) {
             $.get('?handler=AddSong&id=' + id, function (data) {
 
             });
@@ -41,9 +41,9 @@
                     <td class="align-middle text-center">@song.Likes</td>
                     <td class="text-center align-middle">
                         @if (@song.LikedByUser) {
-                            <button class="btn btn-outline-danger fas fa-heart" onclick="likeSong('@song.Id');return false;"></button>
+                            <button class="btn btn-outline-danger fas fa-heart" onclick="likeSongQueue('@song.Id');return false;"></button>
                         } else {
-                            <button class="btn btn-outline-danger far fa-heart" onclick="likeSong('@song.Id');return false;"></button>
+                            <button class="btn btn-outline-danger far fa-heart" onclick="likeSongQueue('@song.Id');return false;"></button>
                         }
                     </td>
                 </tr>

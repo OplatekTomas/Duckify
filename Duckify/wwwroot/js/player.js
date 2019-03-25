@@ -1,6 +1,16 @@
 ﻿var songsQueued = null;
 var token;
 
+
+function search() {
+    $("#searchResults").animate({ maxHeight: '0px', opacity: '0' }, 200, function () {
+        $.get('/?handler=Search&query=' + $("#searchBox").val(), function (data) {
+            $("#searchResults").animate({ maxHeight: '910px', opacity: '1' }, 200);
+            $("#searchResults").html(data);
+        });
+    });
+}
+
 function init() {
     token = spotifyToken;
     api = new SpotifyWebApi();
