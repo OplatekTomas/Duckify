@@ -6,7 +6,10 @@
             $.get('?handler=AddSong&id=' + id, function (data) {
 
             });
-            $("#searchTable").remove();
+            //$("#searchTable").remove();
+            $("#searchTable").animate({maxHeight: "0px";}, 2000);
+
+
         }
     </script>
     <table class="table" id="searchTable">
@@ -39,6 +42,7 @@
 
         </tbody>
     </table>
+
 } else {
     <h4 class="text-center mb-5 mt-3">No results.</h4>
 }

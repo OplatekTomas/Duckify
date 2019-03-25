@@ -1,5 +1,15 @@
 ﻿var oldData;
 
+function search() {
+    $("#searchResults").animate({ maxHeight: '0px', opacity: '0' }, 200, function () {
+        $.get('/?handler=Search&query=' + $("#searchBox").val(), function (data) {
+            $("#searchResults").animate({ maxHeight: '910px', opacity: '1' }, 200);
+            $("#searchResults").html(data);
+        });
+    });
+}
+
+
 function render() {
     var player = document.getElementById("player");
 
@@ -12,8 +22,8 @@ function render() {
                 oldData = data;
                 document.getElementById("songName").innerText = data.name;
                 document.getElementById("artistNames").innerText = data.artists;
-                document.getElementById("indexImageCover").style.backgroundImage = "url("+data.imageUrl+")";
-                
+                document.getElementById("indexImageCover").style.backgroundImage = "url(" + data.imageUrl + ")";
+
 
             }
 

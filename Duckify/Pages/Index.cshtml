@@ -15,15 +15,15 @@
 
             </div>
         </div>
-        <form class="mx-3 my-auto d-inline w-100" id="searchForm">
+        <form class="mx-3 my-auto d-inline w-100" id="searchForm" onsubmit="search(); return false;">
             <div class=" input-group">
-                <input class="form-control bg-light text-light" type="text" placeholder="Search songs" id="searchBox" />
+                <input class="form-control bg-light text-dark" type="text" placeholder="Search songs" id="searchBox" />
                 <div class="input-group-append">
                     <button class="btn btn-outline-warning bg-light" type="submit">Search</button>
                 </div>
             </div>
         </form>
-        <div id="searchResults"></div>
+        <div id="searchResults" style="max-height: 0px; overflow: hidden;"></div>
         <div id="queueResults"></div>
 
     } else {
@@ -54,22 +54,16 @@
                 }, 3000);
                 $('[data-toggle="tooltip"]').tooltip();
                 $.get('/?handler=GetQueue', function (data) {
-                    $("#queueResults").html("")
-                    $("#queueResults").html(data)
+                    $("#queueResults").html("");
+                    $("#queueResults").html(data);
                 });
                 document.onload = setInterval(function () {
                     $.get('/?handler=GetQueue', function (data) {
-                        $("#queueResults").html("")
-                        $("#queueResults").html(data)
+                        $("#queueResults").html("");
+                        $("#queueResults").html(data);
                     });
 
                 }, 1500);
-                $("#searchForm").submit(function (event) {
-                    $.get('/?handler=Search&query=' + $("#searchBox").val(), function (data) {
-                        $("#searchResults").html(data)
-                    });
-                    event.preventDefault();
-                });
             </script>
         }
     }
