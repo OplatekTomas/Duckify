@@ -10,9 +10,12 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json.Linq;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Enums;
+using System.Reflection;
+using Duckify.Classes;
 
 namespace Duckify {
     public class Spotify {
+        [Serializable]
         public class QueueCollection : KeyedCollection<string, QueueItem> {
 
             // This is the only method that absolutely must be overridden,
@@ -26,13 +29,16 @@ namespace Duckify {
                 // In this example, the key is the part number.
                 return item.Id;
             }
+
         }
 
 
+        public static string Hash { get; set; }
         public static SpotifyWebAPI Client { get; set; }
         private static QueueCollection SongQueue { get; set; } = new QueueCollection();
         public static bool IsInitialized { get; set; } = false;
         private static Timer _refreshTimer;
+        private static Timer _tickTimer;
 
         public static void Init(string token, string refreshToken) {
             if (!IsInitialized) {
@@ -42,7 +48,8 @@ namespace Duckify {
                 };
                 IsInitialized = true;
                 //initializes refresh timer and starts 
-                StartTimer(refreshToken);
+                StartRefreshTimer(refreshToken);
+                StartTickTimer();
             }
         }
 
@@ -52,6 +59,9 @@ namespace Duckify {
             _refreshTimer.Stop();
             _refreshTimer.Close();
             _refreshTimer = null;
+            _tickTimer.Stop();
+            _tickTimer.Close();
+            _tickTimer = null;
             Client = null;
         }
 
@@ -125,7 +135,24 @@ namespace Duckify {
             return true;
         }
 
-        private static void StartTimer(string refreshToken) {
+        private static void StartTickTimer() {
+            if (_tickTimer == null) {
+                _tickTimer = new Timer(500);
+            }
+            if (_tickTimer.Enabled) {
+                _tickTimer.Stop();
+                _tickTimer.Close();
+                _tickTimer = new Timer(500);
+            }
+            _tickTimer.Elapsed += (s, ev) => Tick();
+            _tickTimer.Start();
+        }
+
+        private static void Tick() {
+            Hash = HashObject.GenerateKey(SongQueue);
+        }
+
+        private static void StartRefreshTimer(string refreshToken) {
             //59 minutes and 30 seconds in miliseconds (((60 seconds * 59 minutes) + 30 seconds) * 1000 ms)     
             if (_refreshTimer == null) {
                 _refreshTimer = new Timer(3570 * 1000);

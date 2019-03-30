@@ -6,23 +6,26 @@
 
 <div>
     <link rel="stylesheet" href="~/css/index.css" />
-    @if (Spotify.IsInitialized) {
+   @if (Spotify.IsInitialized) {
         <div class="shadow bg-light" id="player" data-toggle="tooltip" data-placement="bottom" title="Playing now">
             <div class="shadow" id="indexImageCover"></div>
             <div id="indexText">
-                    <div class="elip d-block"><span id="songName" style="font-size: 18px; font-weight:bold;">Loading...</span></div>
-                    <div class="elip"><span id="artistNames">&nbsp;</span></div>
+                <div class="elip d-block"><span id="songName" style="font-size: 18px; font-weight:bold;">Loading...</span></div>
+                <div class="elip"><span id="artistNames">&nbsp;</span></div>
 
             </div>
-        </div>
-        <form class="mx-3 my-auto d-inline w-100" id="searchForm" onsubmit="search(); return false;">
-            <div class=" input-group">
-                <input class="form-control bg-light text-dark" type="text" placeholder="Search songs" id="searchBox" />
-                <div class="input-group-append">
-                    <button class="btn btn-outline-warning bg-light" type="submit">Search</button>
+        </div>    
+        <div class="pb-3"></div>
+        <div class="sticky-top pt-3 pb-3 bg-body">
+            <form class="my-auto d-inline w-100" id="searchForm" onsubmit="search(); return false;">
+                <div class="input-group shadow">
+                    <input class="form-control bg-light text-dark" type="text" placeholder="Search songs" id="searchBox" />
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-warning bg-light" type="submit">Search</button>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
         <div id="searchResults" style="max-height: 0px; overflow: hidden;"></div>
         <div id="queueResults"></div>
 
@@ -53,17 +56,8 @@
                     render();
                 }, 3000);
                 $('[data-toggle="tooltip"]').tooltip();
-                $.get('/?handler=GetQueue', function (data) {
-                    $("#queueResults").html("");
-                    $("#queueResults").html(data);
-                });
-                document.onload = setInterval(function () {
-                    $.get('/?handler=GetQueue', function (data) {
-                        $("#queueResults").html("");
-                        $("#queueResults").html(data);
-                    });
-
-                }, 1500);
+                renderQueue();
+                window.setInterval(function () { renderQueue() }, 1000);
             </script>
         }
     }

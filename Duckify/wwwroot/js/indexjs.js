@@ -9,6 +9,23 @@ function search() {
     });
 }
 
+var token = "";
+function renderQueue() {
+    $.get("/api/spotify/qHash", function (hash) {
+        if (token !== hash) {
+            token = hash;
+            renderQueueOverride();
+        } 
+    });
+}
+
+
+function renderQueueOverride() {
+    $.get('/?handler=GetQueue', function (data) {
+        $("#queueResults").html("");
+        $("#queueResults").html(data);
+    });
+}
 
 function render() {
     var player = document.getElementById("player");

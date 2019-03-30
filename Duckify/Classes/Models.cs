@@ -53,10 +53,13 @@ namespace Duckify {
             Uri = item.Track.Uri;
         }
     }
-
+    [Serializable]
     public class QueueItem {
         public string Id;
-        public FullTrack Track { get; set; }
+
+        [NonSerialized]
+        private FullTrack _track;
+        public FullTrack Track { get => _track; set => _track = value; }
         public string AddedBy { get; set; }
         public List<string> LikedBy { get; set; } = new List<string>();
         public int Likes { get; set; }

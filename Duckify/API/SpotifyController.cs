@@ -18,6 +18,24 @@ namespace Duckify.API {
             this.SignInManager = signInManager;
         }
 
+
+        [HttpGet("ip", Name = "GetIp")]
+        public string GetIP() {
+            return HttpContext.Connection.RemoteIpAddress.ToString();
+        }
+
+        [HttpGet("currentSong", Name = "GetCurrentSong")]
+        public JsonResult GetCurrentSong() {
+            return new JsonResult(Spotify.GetCurrentItem(""));
+        }
+
+        [HttpGet("qHash", Name = "GetQueueHash")]
+        public JsonResult GetQueueHash() {
+            return new JsonResult(Spotify.Hash);
+        }
+
+        //These are experimantal features that are not fully tested or implemented. They may or may not be used in a future release
+        /*
         [HttpGet("upvote/{id}", Name = "LikeSong")]
         public async Task<IActionResult> Upvote(string id) {
             var isAuth = await IsAuthorized();
@@ -45,18 +63,7 @@ namespace Duckify.API {
                 return (false, null);
             }
             return (true, token);
-        }
-
-        [HttpGet("ip", Name = "GetIp")]
-        public string GetIP() {
-            return HttpContext.Connection.RemoteIpAddress.ToString();
-        }
-
-        [HttpGet("currentSong", Name = "GetCurrentSong")]
-        public JsonResult GetCurrentSong() {
-            return new JsonResult(Spotify.GetCurrentItem(""));
-        }
-
+        }*/
 
     }
 }
