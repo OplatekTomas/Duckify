@@ -10,9 +10,15 @@
 } else if (Model.Count() != 0) {
     <script>
         function likeSongQueue(id) {
-            $.get('?handler=AddSong&id=' + id, function (data) {
-
-            });
+            if (getCookie(".AspNet.Consent")) {
+                $.get('?handler=AddSong&id=' + id, function (data) {
+                    if (data === false) {
+                        alert("There was an error with authentication");
+                    }
+                });
+            } else {
+                alert("This feature is blocked without accepting cookies.");
+            }
         }
     </script>
     <table class="table">

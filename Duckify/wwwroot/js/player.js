@@ -15,7 +15,7 @@ function init() {
     token = spotifyToken;
     api = new SpotifyWebApi();
     api.setAccessToken(token);
-    setInterval(renderView, 1500);
+    setInterval(renderView, 1000);
 }
 
 function waitForElement() {
@@ -27,18 +27,33 @@ function waitForElement() {
     }
 }
 
-function renderView() {
-    $.get('/Admin/Player?handler=GetQueue', function (data) {
-        $("#queueResults").html("");
-        $("#queueResults").html(data);
-        if (document.getElementById("noSongs") !== null) {
-            songsQueued = false;
-        } else if (songsQueued === false) {
-            startPlayback();
-            songsQueued = true;
+
+function renderQueue() {
+    $.get("/api/spotify/qHash", function (hash) {
+        if (dataToken !== hash) {
+            dataToken = hash;
+            renderQueueOverride();
         }
     });
+}
 
+var dataToken = "";
+function renderView() {
+    $.get("/api/spotify/qHash", function (hash) {
+        if (dataToken !== hash) {
+            dataToken = hash;
+            $.get('/Admin/Player?handler=GetQueue', function (data) {
+                $("#queueResults").html("");
+                $("#queueResults").html(data);
+                if (document.getElementById("noSongs") !== null) {
+                    songsQueued = false;
+                } else if (songsQueued === false) {
+                    startPlayback();
+                    songsQueued = true;
+                }
+            });
+        }
+    });  
 }
 
 function startPlayback() {

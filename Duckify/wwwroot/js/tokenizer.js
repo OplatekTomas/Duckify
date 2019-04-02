@@ -1,14 +1,11 @@
 
 function runGenerator() {
     var cookie = getCookie(".AspNet.Consent");
-    if (cookie === null) {
-        alert("Please accept cookies");
-    } else {
+    if (cookie !== null) {
         setUniqueToken();
     }
 }
 
-//I went full egyptian with this one. Do I feel ashamed? Yes.
 function setUniqueToken() {
     getUserIP(function (ip) {
         var parts = ip.split(".");
@@ -44,25 +41,6 @@ function Crypt(token, keyString, ivString) {
             padding: CryptoJS.pad.Pkcs7
         });
     return encrypted.toString();
-}
-
-
-function getCookie(name) {
-    var dc = document.cookie;
-    var prefix = name + "=";
-    var begin = dc.indexOf("; " + prefix);
-    if (begin == -1) {
-        begin = dc.indexOf(prefix);
-        if (begin != 0) return null;
-    }
-    else {
-        begin += 2;
-        var end = document.cookie.indexOf(";", begin);
-        if (end == -1) {
-            end = dc.length;
-        }
-    }
-    return decodeURI(dc.substring(begin + prefix.length, end));
 }
 
 

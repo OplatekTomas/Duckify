@@ -28,9 +28,33 @@ function likeSong(id) {
     $("#searchResults").animate({ maxHeight: '0px', opacity: '0' }, 200, function () {
         document.getElementById("searchResults").innerHTML = null;
     });
-    $.get('?handler=AddSong&id=' + id, function (data) {
-
-    });
+    if (getCookie(".AspNet.Consent")) {
+        $.get('?handler=AddSong&id=' + id, function (data) {
+            if (data === false) {
+                alert("There was an error with authentication");
+            }
+        });
+    } else {
+        alert("This feature is blocked without accepting cookies.");
+    }
 }
 
+
+function getCookie(name) {
+    var dc = document.cookie;
+    var prefix = name + "=";
+    var begin = dc.indexOf("; " + prefix);
+    if (begin === -1) {
+        begin = dc.indexOf(prefix);
+        if (begin !== 0) return null;
+    }
+    else {
+        begin += 2;
+        var end = document.cookie.indexOf(";", begin);
+        if (end === -1) {
+            end = dc.length;
+        }
+    }
+    return decodeURI(dc.substring(begin + prefix.length, end));
+}
 
