@@ -3,10 +3,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Duckify.Data.ApplicationContext
 {
-    public partial class Init : Migration
+    public partial class _001 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AppSettings",
+                columns: table => new
+                {
+                    AllowedEmailsStr = table.Column<string>(nullable: true),
+                    SlowMode = table.Column<bool>(nullable: false),
+                    SlowModeLimit = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -50,11 +62,11 @@ namespace Duckify.Data.ApplicationContext
                 name: "Songs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Artist = table.Column<string>(nullable: true),
-                    Length = table.Column<int>(nullable: false)
+                    Length = table.Column<int>(nullable: false),
+                    PlayCount = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,6 +179,30 @@ namespace Duckify.Data.ApplicationContext
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserStarredSongs",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    SongId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserStarredSongs", x => new { x.SongId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_UserStarredSongs_AspNetUsers_SongId",
+                        column: x => x.SongId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserStarredSongs_Songs_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Songs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -203,10 +239,18 @@ namespace Duckify.Data.ApplicationContext
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserStarredSongs_UserId",
+                table: "UserStarredSongs",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AppSettings");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -223,13 +267,16 @@ namespace Duckify.Data.ApplicationContext
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Songs");
+                name: "UserStarredSongs");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Songs");
         }
     }
 }

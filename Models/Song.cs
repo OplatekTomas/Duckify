@@ -1,14 +1,14 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace Duckify.Models {
 
     public class UserStarredSongs {
-        public int UserId;
-        public User User;
-
-        public int SongId;
-        public Song Song;
+        public string UserId { get; set; }
+        public User User { get; set; }
+        public string SongId { get; set; }
+        public Song Song { get; set; }
 
     }
 
@@ -19,5 +19,6 @@ namespace Duckify.Models {
         public string Artist { get; set; }
         public int Length { get; set; }
         public int PlayCount { get; set; }
+        public List<UserStarredSongs> FavoriteBy { get; set; }
     }
 }

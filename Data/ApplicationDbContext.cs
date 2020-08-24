@@ -16,10 +16,17 @@ namespace Duckify.Data {
                 entity.HasNoKey();
             });
 
+            builder.Entity<UserStarredSongs>().HasKey(x => new {x.SongId, x.UserId});
+            
             builder.Entity<UserStarredSongs>(entity => {
-                entity.HasOne(pt => pt.User)
-                    .WithMany(pt => pt.FavoriteSongs)
-                    .HasForeignKey(pt => pt.SongId);
+                entity.HasOne(x => x.User)
+                    .WithMany(x => x.FavoriteSongs)
+                    .HasForeignKey(x => x.SongId);
+            });
+            builder.Entity<UserStarredSongs>(entity => {
+                entity.HasOne(x => x.Song)
+                    .WithMany(x => x.FavoriteBy)
+                    .HasForeignKey(x => x.UserId);
             });
             base.OnModelCreating(builder);
         }

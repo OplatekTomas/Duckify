@@ -15,8 +15,6 @@
     private int currentCount = 0;
 
     private void IncrementCount() {
-        context.Songs.Add(new Song(){ Length = currentCount});
-        context.SaveChanges();
-        currentCount++;
+       
     }
 }
