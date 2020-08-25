@@ -17,12 +17,9 @@ using Duckify.Areas.Identity;
 using Duckify.Data;
 using Duckify.Models;
 
-namespace Duckify
-{
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
+namespace Duckify {
+    public class Startup {
+        public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
@@ -30,29 +27,31 @@ namespace Duckify
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services) { 
+        public void ConfigureServices(IServiceCollection services) {
             //services.AddDbContext<SongContext>(options =>
             //s    options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddIdentity<User, IdentityRole>(options => 
+                    options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultTokenProviders()
+                .AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            services
+                .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>
+                >();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider srv) {
+            if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-            else
-            {
+            else {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -66,12 +65,40 @@ namespace Duckify
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
+
+            app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+            CreateDefaultUser(srv).Wait();
         }
+        
+        public async Task CreateDefaultUser(IServiceProvider serviceProvider) {
+            //initializing custom roles   
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            string[] roleNames = { "Admin", "User" };
+            foreach (var roleName in roleNames) {
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist) {
+                    _ = await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            var email = Configuration["AdminUsername"];
+            User user = await userManager.FindByEmailAsync(email);
+            if (user == null) {
+                user = new User() {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(user, Configuration["AdminPassword"]);
+            }
+            await userManager.AddToRoleAsync(user, "Admin");
+
+        }
+        
     }
 }
