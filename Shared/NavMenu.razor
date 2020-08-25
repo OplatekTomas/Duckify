@@ -1,18 +1,25 @@
-﻿<a class="navbar-brand text-warning" href="">Duckify</a>
+﻿@using Duckify.Data
+
+<a class="navbar-brand text-warning" href="">Duckify</a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColl" aria-controls="navbarColl" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
 </button>
-<div class="navbar-collapse collapse"  id="navbarColl">
+<div class="navbar-collapse collapse" id="navbarColl">
     <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
+        <!--<li class="nav-item">
             <NavLink class="nav-link text-warning" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home text-warning" aria-hidden="true"></span> Home
             </NavLink>
-        </li>
+        </li>  -->
         <AuthorizeView>
             <Authorized>
+                @if (context.User.IsInRole("Admin")) {
+                    <NavLink class="nav-link text-warning" href="dashboard" Match="NavLinkMatch.All">
+                         Dashboard
+                    </NavLink>
+                }
                 <li class="nav-item">
-                    <a class="nav-link" href="Identity/Account/Manage">@context.User.Identity.Name!</a>
+                    <a class="nav-link text-warning" href="Identity/Account/Manage">@context.User.Identity.Name!</a>
                 </li>
                 <li class="nav-item">
                     <form method="post" action="Identity/Account/LogOut">

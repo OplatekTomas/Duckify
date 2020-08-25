@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Duckify.Areas.Identity;
 using Duckify.Data;
 using Duckify.Models;
+using Duckify.Services;
 
 namespace Duckify {
     public class Startup {
@@ -38,7 +39,10 @@ namespace Duckify {
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddRazorPages();
+            services.AddRazorPages(options => {
+                
+            });
+            services.AddSingleton<SpotifyService>();
             services.AddServerSideBlazor();
             services
                 .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>
@@ -71,30 +75,44 @@ namespace Duckify {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-            CreateDefaultUser(srv).Wait();
+            CreateAdminAccount(srv).Wait();
         }
         
-        public async Task CreateDefaultUser(IServiceProvider serviceProvider) {
-            //initializing custom roles   
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        
+        private async Task CreateAdminAccount(IServiceProvider serviceProvider) {
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            var admins = await userManager.GetUsersInRoleAsync("Admin");
+            if (admins.Count > 0) {
+                return;
+            }
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             string[] roleNames = { "Admin", "User" };
             foreach (var roleName in roleNames) {
-                var roleExist = await roleManager.RoleExistsAsync(roleName);
-                if (!roleExist) {
+                if (!await roleManager.RoleExistsAsync(roleName)) {
                     _ = await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
-
             var email = Configuration["AdminUsername"];
-            User user = await userManager.FindByEmailAsync(email);
+            if (email == null) {
+                do {
+                    Console.WriteLine("Please enter admin email: ");
+                    email = Console.ReadLine();
+                } while (!Helper.IsValidEmail(email));
+            }
+            var user = await userManager.FindByEmailAsync(email);
             if (user == null) {
                 user = new User() {
                     UserName = email,
                     Email = email,
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, Configuration["AdminPassword"]);
+                var pwd = Configuration["AdminPassword"];
+                if (pwd == null) {
+                    Console.WriteLine("Please enter admin password: ");
+                    pwd = Console.ReadLine();
+                }
+                await userManager.CreateAsync(user, pwd);
+                
             }
             await userManager.AddToRoleAsync(user, "Admin");
 

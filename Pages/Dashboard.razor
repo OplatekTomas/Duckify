@@ -1,0 +1,50 @@
+@page "/dashboard"
+@using Duckify.Data
+@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.Extensions.Configuration
+
+@inject ApplicationDbContext Context
+@inject AuthenticationStateProvider Auth
+@inject IConfiguration Configuration
+@inject NavigationManager NavigationManager
+
+
+@if (!Auth.GetAuthenticationStateAsync().Result.User.IsInRole("Admin")) {
+    <h3 class="text-danger">You don't have the authorization to access this page</h3>
+    <h5>Nice attempt tho</h5>
+    return;
+}
+
+<button type="button" disabled="@IsDisabled" class="btn btn-success" @onclick="RedirectToSpotify">Log in with Spotify</button>
+
+<span class="text-danger" hidden="@(!IsDisabled)"> Spotify API client ID and Secret is not configured</span>
+
+@code{
+
+    string spotifyID;
+
+    string spotifySecret;
+
+
+    bool IsDisabled { get; set; }
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+        spotifyID = Configuration["SpotifyID"];
+        spotifySecret = Configuration["SpotifySecret"];
+        if (spotifyID == null || spotifySecret == null) {
+            IsDisabled = true;
+        }
+    }
+    private void RedirectToSpotify() {
+        var uriBuilder = new UriBuilder("https://accounts.spotify.com/authorize");
+        var queryBuilder = new QueryBuilder();
+        queryBuilder.Add("client_id", spotifyID);
+        queryBuilder.Add("response_type", "code");
+        queryBuilder.Add("redirect_uri","https://localhost:5001/spotify-callback");
+        uriBuilder.Query = queryBuilder.ToString();
+        NavigationManager.NavigateTo(uriBuilder.ToString());
+        
+    }
+
+}
