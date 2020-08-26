@@ -67,6 +67,8 @@ namespace Duckify.Services {
             var auth = JsonSerializer.Deserialize<SpotifyAuth>(content);
             auth.Service = this;
             Auth = auth;
+            Client = new SpotifyClient(Auth.AccessToken);
+
             Auth.EnableRefresh(authHeader);
             IsAuthenticated = true;
             return null;
