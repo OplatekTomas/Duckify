@@ -1,7 +1,41 @@
 ﻿@page "/"
+@using Microsoft.CodeAnalysis.Text
+@using System.Timers
+@inject SpotifyService Spotify
+@using Duckify.Services
+<div class="container">
+    <div class="md-form mt-0">
+        <input class="form-control bg-dark text-white" type="text" placeholder="Search" aria-label="Search" @oninput="SearchTextChanged">
+    </div>
 
-<h1>Hello, world!</h1>
+</div>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code{
+
+    private Timer _searchTimer;
+
+    private string _searchText;
+
+    public Index() {
+        _searchTimer = new Timer(200);
+        _searchTimer.Elapsed += OnSearchTimerTick;
+        _searchTimer.AutoReset = false;
+    }
+
+    void SearchTextChanged(ChangeEventArgs args) {
+        _searchText = (string)args.Value;
+        _searchTimer.Stop();
+        _searchTimer.Start();
+    }
+
+    private void OnSearchTimerTick(object sender, EventArgs e) {
+        _searchTimer.Stop();
+        Search();
+    }
+
+    private void Search() {
+        
+    }
+
+}

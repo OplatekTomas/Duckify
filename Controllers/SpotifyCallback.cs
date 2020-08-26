@@ -10,11 +10,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Duckify.Controllers {
     public class SpotifyCallback : Controller {
-        private IConfiguration Configuration;
 
         private SpotifyService _service;
-        public SpotifyCallback(IConfiguration configuration, SpotifyService service) {
-            Configuration = configuration;
+        public SpotifyCallback(SpotifyService service) {
             _service = service;
 
         }
@@ -27,22 +25,13 @@ namespace Duckify.Controllers {
                 return Content(returnMessage);
             }
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Helper.Base64Encode(Configuration["SpotifyID"] + ":" + Configuration["SpotifySecret"]));
-
-            var formContent = new FormUrlEncodedContent(new[] {
-                new KeyValuePair<string,string>("code", Request.Query["code"]),
-                new KeyValuePair<string, string>("redirect_uri", "https://localhost:5001/spotify-callback"),
-                new KeyValuePair<string, string>("grant_type", "authorization_code"),
-            });
-
-            var response = client.PostAsync("https://accounts.spotify.com/api/token", formContent).Result;
-
-            var responseContent = response.Content;
-            var responseString = responseContent.ReadAsStringAsync().Result;
-            
-            return Content("");
+            var response = await _service.Authenticate(Request.Query["code"]);
+            if (response == null) {
+                return Redirect("/dashboard");
+            }
+            var ret = "Error has occured while trying to get authorization:\n";
+            ret += response;
+            return Content(ret);
         }
 
         

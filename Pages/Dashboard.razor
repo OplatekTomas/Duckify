@@ -1,12 +1,12 @@
 @page "/dashboard"
 @using Duckify.Data
+@using Duckify.Services
 @using Microsoft.AspNetCore.Http.Extensions
 @using Microsoft.Extensions.Configuration
 
-@inject ApplicationDbContext Context
 @inject AuthenticationStateProvider Auth
-@inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
+@inject SpotifyService Spotify
 
 
 @if (!Auth.GetAuthenticationStateAsync().Result.User.IsInRole("Admin")) {
@@ -21,30 +21,14 @@
 
 @code{
 
-    string spotifyID;
-
-    string spotifySecret;
-
-
     bool IsDisabled { get; set; }
 
     protected override void OnInitialized() {
         base.OnInitialized();
-        spotifyID = Configuration["SpotifyID"];
-        spotifySecret = Configuration["SpotifySecret"];
-        if (spotifyID == null || spotifySecret == null) {
-            IsDisabled = true;
-        }
+        IsDisabled = !Spotify.HasClientIds;
     }
     private void RedirectToSpotify() {
-        var uriBuilder = new UriBuilder("https://accounts.spotify.com/authorize");
-        var queryBuilder = new QueryBuilder();
-        queryBuilder.Add("client_id", spotifyID);
-        queryBuilder.Add("response_type", "code");
-        queryBuilder.Add("redirect_uri","https://localhost:5001/spotify-callback");
-        uriBuilder.Query = queryBuilder.ToString();
-        NavigationManager.NavigateTo(uriBuilder.ToString());
-        
+        NavigationManager.NavigateTo(Spotify.GetSpotifyLoginRedirectUri());
     }
 
 }
