@@ -1,7 +1,13 @@
 @using SpotifyAPI.Web
 @using System.Timers
+@using Duckify.Models
 @using Duckify.Services
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
 @inject SpotifyService Spotify
+@inject SongQueue Queue;  
+@inject UserManager<User> UserManager;  
+@inject HttpContextAccessor Accessor;
 
 <input class="form-control bg-dark text-white" type="text" placeholder="Search" aria-label="Search" @oninput="SearchTextChanged">
 <div>
@@ -18,20 +24,20 @@
             <tbody>
             @foreach (var song in Tracks) {
                 <tr>
-                <td width="96">
-                    <img src="@song.Album.Images[0].Url" height="64" width="64"/>
+                <td width="88">
+                    <img src="@song.Album.Images[0].Url" height="56" width="56"/>
                 </td>
                 <td class="align-middle demo">
                     <div>
                         <span class="font-weight-bold">@song.Name</span>
                     </div>
                     <div>
-                        <span>@ConvertArtists(song.Artists)</span>
+                        <span>@Helper.ConvertArtists(song.Artists)</span>
                     </div>
                 </td>
-                <td class="d-none d-sm-table-cell align-middle">@ConvertMs(song.DurationMs)</td>
+                <td class="d-none d-sm-table-cell align-middle">@Helper.ConvertMs(song.DurationMs)</td>
                 <td class="align-middle">
-                    <img src="img/like.png" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="args => AddSong(song.Id)" />
+                    <img src="img/like.png" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="args => AddSong(song.Id)" alt="Like image">
                 </td>
                 </tr>
             }
@@ -59,7 +65,12 @@
         _searchTimer.AutoReset = false;
     }
 
-    private void AddSong(string id) { }
+    private async Task AddSong(string id) {
+        await Queue.Add(id,await UserManager.GetUserAsync(Accessor.HttpContext.User));
+        IsHidden = true;
+        await InvokeAsync(StateHasChanged);
+
+    }
 
     private void SearchTextChanged(ChangeEventArgs args) {
         _searchText = (string) args.Value;
@@ -86,15 +97,6 @@
         Tracks = result.Tracks.Items;
         IsHidden = false;
         await InvokeAsync(StateHasChanged);
-    }
-
-    private string ConvertMs(int ms) {
-        var t = TimeSpan.FromMilliseconds(ms);
-        return $"{t.Minutes:D2}:{t.Seconds:D2}";
-    }
-
-    private string ConvertArtists(List<SimpleArtist> artists) {
-        return string.Join(", ", artists.Select(x => x.Name));
     }
 
 }

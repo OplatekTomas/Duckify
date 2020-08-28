@@ -17,6 +17,8 @@ using Duckify.Areas.Identity;
 using Duckify.Data;
 using Duckify.Models;
 using Duckify.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Duckify {
     public class Startup {
@@ -43,9 +45,12 @@ namespace Duckify {
                 
             });
             services.AddSingleton<SpotifyService>();
+            services.AddSingleton<SongQueue>();
             services.AddServerSideBlazor();
+            //services.AddHttpContextAccessor();
+            services.AddScoped<HttpContextAccessor>();
             services
-                .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>
+                .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>
                 >();
         }
 

@@ -1,23 +1,20 @@
 ﻿@page "/"
-@using Microsoft.CodeAnalysis.Text
-@using System.Timers
 @inject SpotifyService Spotify
-@using Duckify.Components;
-@using Duckify.Services
-@using SpotifyAPI.Web
+@using Duckify.Services  
+@using Duckify.Components
 <div class="container">
     <div class="md-form mt-0">
-            <SpotifySearchComponent />
+        <SpotifySearchComponent/>
     </div>
-
+    <div class="md-form mt-2">
+        <SpotifyQueueComponent/>
+    </div>
 </div>
 
 
 @code{
 
-    public Index() {
+ 
 
-    }
 
-   
 }

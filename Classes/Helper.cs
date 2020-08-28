@@ -1,9 +1,22 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
+using SpotifyAPI.Web;
 
 namespace Duckify {
-    public class Helper {
+    public static class Helper {
+        
+        
+        public static string ConvertMs(int ms) {
+            var t = TimeSpan.FromMilliseconds(ms);
+            return $"{t.Minutes:D2}:{t.Seconds:D2}";
+        }
+
+        public static string ConvertArtists(List<SimpleArtist> artists) {
+            return string.Join(", ", artists.Select(x => x.Name));
+        }
         
         public static string Base64Encode(string plainText) {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);

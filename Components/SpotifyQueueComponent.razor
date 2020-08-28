@@ -1,0 +1,74 @@
+@using Duckify.Services
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Duckify.Models
+@inject SongQueue SongQueue
+@inject UserManager<User> UserManager;  
+@inject HttpContextAccessor Accessor;
+
+
+@if (SongQueue.Count == 0) {
+    <h2 class="text-center mb-4 mt-5">There are no songs in queue right now</h2>
+}
+else {
+    <table class="table">
+        <thead class="">
+        <tr class="">
+            <th scope="col" class=""></th>
+            <th scope="col" width="65%" class="">Name</th>
+            <th scope="col" width="10%" class="d-none d-sm-table-cell text-center">Length</th>
+            <th scope="col" width="10%" class="text-center">Likes</th>
+            <th scope="col" width="10%" class="text-center">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var song in SongQueue.Queue) {
+            <tr>
+                <td width="88">
+                    <img src="@song.Track.Album.Images[0].Url" height="56" width="56">
+                </td>
+                <td class="align-middle demo">
+                    <div>
+                        <span class="font-weight-bold">@song.Track.Name</span>
+                    </div>
+                    <div>
+                        <span>@Helper.ConvertArtists(song.Track.Artists)</span>
+                    </div>
+                </td>
+                <td class="d-none d-sm-table-cell align-middle text-center">@Helper.ConvertMs(song.Track.DurationMs)</td>
+                <td class="align-middle text-center">@song.LikeCount</td>
+
+                <td class="align-middle">
+                     <img src="img/like.png" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="args => LikeSong(song.SongId)" alt="Like image">
+                </td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+}
+
+
+@code {
+
+
+    protected override void OnInitialized() {
+        SongQueue.QueueChanged += EventTriggered;
+
+        base.OnInitialized();
+    }
+
+    ~SpotifyQueueComponent() {
+        SongQueue.QueueChanged -= EventTriggered;
+    }
+
+    private async Task LikeSong(string id) {
+        SongQueue.Like(id, await UserManager.GetUserAsync(Accessor.HttpContext.User));
+    }
+
+    private async void EventTriggered(object s, EventArgs args) {
+        await Task.Delay(100);
+        await InvokeAsync(StateHasChanged);
+    }
+
+}
