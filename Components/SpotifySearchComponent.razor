@@ -1,0 +1,100 @@
+@using SpotifyAPI.Web
+@using System.Timers
+@using Duckify.Services
+@inject SpotifyService Spotify
+
+<input class="form-control bg-dark text-white" type="text" placeholder="Search" aria-label="Search" @oninput="SearchTextChanged">
+<div>
+    @if (Tracks.Count > 0) {
+        <table class="table" hidden="@IsHidden">
+            <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col" width="70%" class="">Name</th>
+                <th scope="col" width="15%" class="d-none d-sm-table-cell">Length</th>
+                <th scope="col" width="15%" class="text-center">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var song in Tracks) {
+                <tr>
+                <td width="96">
+                    <img src="@song.Album.Images[0].Url" height="64" width="64"/>
+                </td>
+                <td class="align-middle demo">
+                    <div>
+                        <span class="font-weight-bold">@song.Name</span>
+                    </div>
+                    <div>
+                        <span>@ConvertArtists(song.Artists)</span>
+                    </div>
+                </td>
+                <td class="d-none d-sm-table-cell align-middle">@ConvertMs(song.DurationMs)</td>
+                <td class="align-middle">
+                    <img src="img/like.png" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="args => AddSong(song.Id)" />
+                </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+</div>
+
+@code {
+
+    private bool IsHidden { get; set; }
+
+    private Timer _searchTimer;
+
+    private List<FullTrack> Tracks { get; set; }
+
+    private string _searchText;
+
+
+    public SpotifySearchComponent() {
+        Tracks = new List<FullTrack>();
+        _searchTimer = new Timer(200);
+        _searchTimer.Elapsed += async (s, ev) => await OnSearchTimerTick();
+        _searchTimer.AutoReset = false;
+    }
+
+    private void AddSong(string id) { }
+
+    private void SearchTextChanged(ChangeEventArgs args) {
+        _searchText = (string) args.Value;
+        _searchTimer.Stop();
+        _searchTimer.Start();
+    }
+
+    private async Task OnSearchTimerTick() {
+        _searchTimer.Stop();
+        await Search();
+    }
+
+    private async Task Search() {
+        if (!Spotify.IsAuthenticated || string.IsNullOrEmpty(_searchText)) {
+            Tracks = new List<FullTrack>();
+            IsHidden = true;
+            await InvokeAsync(StateHasChanged);
+
+            return;
+        }
+        var request = new SearchRequest(SearchRequest.Types.Track, _searchText);
+        request.Limit = 7;
+        var result = await Spotify.Client.Search.Item(request);
+        Tracks = result.Tracks.Items;
+        IsHidden = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string ConvertMs(int ms) {
+        var t = TimeSpan.FromMilliseconds(ms);
+        return $"{t.Minutes:D2}:{t.Seconds:D2}";
+    }
+
+    private string ConvertArtists(List<SimpleArtist> artists) {
+        return string.Join(", ", artists.Select(x => x.Name));
+    }
+
+}

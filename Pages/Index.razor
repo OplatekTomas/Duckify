@@ -2,48 +2,12 @@
 @using Microsoft.CodeAnalysis.Text
 @using System.Timers
 @inject SpotifyService Spotify
+@using Duckify.Components;
 @using Duckify.Services
 @using SpotifyAPI.Web
 <div class="container">
     <div class="md-form mt-0">
-        <input class="form-control bg-dark text-white" type="text" placeholder="Search" aria-label="Search" @oninput="SearchTextChanged">
-        <div>
-            @if (Tracks.Count > 0) {
-                <table class="table" hidden="@SearchHidden">
-                    <thead>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col" width="70%" class="">Name</th>
-                        <th scope="col" width="15%" class="d-none d-sm-table-cell">Length</th>
-                        <th scope="col" width="15%" class="">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var song in Tracks) {
-                        <tr>
-                            <td width="96">
-                                <img src="@song.Album.Images[0].Url" height="64" width="64"/>
-                            </td>
-                            <td class="align-middle demo">
-                                <div>
-                                    <span class="font-weight-bold">@song.Name</span>
-                                </div>
-                                <div>
-                                    <span>@ConvertArtists(song.Artists)</span>
-                                </div>
-                            </td>
-                            <td class="d-none d-sm-table-cell align-middle">@ConvertMs(song.DurationMs)</td>
-                            <td class="align-middle">
-                                <form id="@song.Id">
-                                    <button class="btn btn-outline-success">Add</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            }
-        </div>
+            <SpotifySearchComponent />
     </div>
 
 </div>
@@ -51,56 +15,9 @@
 
 @code{
 
-    private Timer _searchTimer;
-
-    private List<FullTrack> Tracks { get; set; }
-
-    private bool SearchHidden { get; set; }
-
-    private string _searchText;
-
     public Index() {
-        Tracks = new List<FullTrack>();
-        _searchTimer = new Timer(200);
-        _searchTimer.Elapsed += async (s, ev) => await OnSearchTimerTick();
-        _searchTimer.AutoReset = false;
+
     }
 
-    void SearchTextChanged(ChangeEventArgs args) {
-        _searchText = (string) args.Value;
-        _searchTimer.Stop();
-        _searchTimer.Start();
-    }
-
-    private async Task OnSearchTimerTick() {
-        _searchTimer.Stop();
-        await Search();
-    }
-
-
-    public string ConvertMs(int ms) {
-        var t = TimeSpan.FromMilliseconds(ms);
-        return $"{t.Minutes:D2}:{t.Seconds:D2}";
-    }
-
-    public string ConvertArtists(List<SimpleArtist> artists) {
-        return string.Join(", ",artists.Select(x => x.Name));
-    }
-
-    private async Task Search() {
-        if (!Spotify.IsAuthenticated || string.IsNullOrEmpty(_searchText)) {
-            Tracks = new List<FullTrack>();
-            SearchHidden = true;
-            await InvokeAsync(StateHasChanged);
-
-            return;
-        }
-        var request = new SearchRequest(SearchRequest.Types.Track, _searchText);
-        request.Limit = 7;
-        var result = await Spotify.Client.Search.Item(request);
-        Tracks = result.Tracks.Items;
-        SearchHidden = false;
-        await InvokeAsync(StateHasChanged);
-    }
-
+   
 }
