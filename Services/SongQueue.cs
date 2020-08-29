@@ -14,7 +14,23 @@ namespace Duckify.Services {
 
         public List<User> LikedBy { get; set; } = new List<User>();
 
-        public List<User> DislikedBy { get; set; } = new List<User>();
+    }
+
+    public class QueueChangedEventArgs : EventArgs {
+        public enum EventTypes {
+            SongLiked,
+            SongAdded,
+            SongRemoved,
+            PlayingSongChanged
+        }
+
+        public EventTypes ChangeType { get; set; }
+
+        public QueueChangedEventArgs() { }
+
+        public QueueChangedEventArgs(EventTypes type) {
+            ChangeType = type;
+        }
     }
 
     public class SongQueue {
@@ -25,7 +41,7 @@ namespace Duckify.Services {
 
         private SpotifyService _service;
 
-        public event EventHandler QueueChanged;
+        public event EventHandler<QueueChangedEventArgs> QueueChanged;
 
         public SongQueue(SpotifyService service) {
             Queue = new List<QueueItem>();
@@ -34,17 +50,21 @@ namespace Duckify.Services {
 
         public async Task Add(string id, User user) {
             if (Contains(id)) {
-                Like(id,user);
+                Like(id, user);
                 return;
             }
+
             var track = await _service.Client.Tracks.Get(id);
             var item = new QueueItem {Track = track, AddedBy = user, SongId = track.Id};
-            if (Queue.Count == 0) {
+            item.LikedBy.Add(user);
+            if (Queue.Count == 0 && CurrentlyPlaying == null) {
                 CurrentlyPlaying = item;
             }
+            else {
+                Queue.Add(item);
+            }
 
-            Queue.Add(item);
-            QueueChanged?.Invoke("Queue changed", new EventArgs());
+            QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongAdded));
         }
 
 
@@ -54,20 +74,44 @@ namespace Duckify.Services {
 
         public void Like(string id, User user) {
             var index = Queue.FindIndex(x => x.SongId == id);
-            if (Queue.Count == 1) {
-                Queue[index].LikeCount++;
-                QueueChanged?.Invoke("Queue changed", new EventArgs());
+            Queue[index].LikeCount++;
+            Queue[index].LikedBy.Add(user);
+            if (index == 0) {
+                QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongLiked));
                 return;
             }
-            Queue[index].LikeCount++;
             var item = Queue[index];
-            while (index != 0 && item.LikeCount > Queue[index-1].LikeCount) {
-                index--; 
+            while (index != 0 && item.LikeCount > Queue[index - 1].LikeCount) {
+                index--;
             }
+
             Queue.Remove(item);
             Queue.Insert(index, item);
-            QueueChanged?.Invoke("Queue changed", new EventArgs());
+            QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongLiked));
+        }
 
+        public void Unlike(string id, User user) {
+            if (!Queue.Any(x => x.LikedBy.Contains(user))) {
+                return;
+            }
+            var index = Queue.FindIndex(x => x.SongId == id);
+            if (Queue[index].LikeCount == 1) {
+                Queue.RemoveAt(index);
+                QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongRemoved));
+
+            }
+        }
+
+        public void Next() {
+            if (Queue.Count == 0) {
+                CurrentlyPlaying = null;
+            }
+            else {
+                CurrentlyPlaying = Queue[0];
+                Queue.RemoveAt(0);
+            }
+
+            QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.PlayingSongChanged));
         }
     }
 }
