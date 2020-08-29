@@ -9,10 +9,10 @@
 @inject UserManager<User> UserManager;  
 @inject HttpContextAccessor Accessor;
 
-<input class="form-control bg-dark text-white" type="text" placeholder="Search" aria-label="Search" @oninput="SearchTextChanged">
+<input class="form-control bg-dark text-white shadow" type="text" @bind-value="SearchText" placeholder="Search" aria-label="Search" @oninput="SearchTextChanged">
 <div>
     @if (Tracks.Count > 0) {
-        <table class="table" hidden="@IsHidden">
+        <table class="table mt-2" hidden="@IsHidden">
             <thead>
             <tr>
                 <th scope="col"></th>
@@ -25,7 +25,7 @@
             @foreach (var song in Tracks) {
                 <tr>
                 <td width="88">
-                    <img src="@song.Album.Images[0].Url" height="56" width="56"/>
+                    <img src="@song.Album.Images[0].Url" class="rounded shadow" height="56" width="56"/>
                 </td>
                 <td class="align-middle demo">
                     <div>
@@ -57,6 +57,7 @@
 
     private string _searchText;
 
+    private string SearchText { get; set; }
 
     public SpotifySearchComponent() {
         Tracks = new List<FullTrack>();
@@ -68,12 +69,13 @@
     private async Task AddSong(string id) {
         await Queue.Add(id,await UserManager.GetUserAsync(Accessor.HttpContext.User));
         IsHidden = true;
+        SearchText = "";
         await InvokeAsync(StateHasChanged);
 
     }
 
     private void SearchTextChanged(ChangeEventArgs args) {
-        _searchText = (string) args.Value;
+        _searchText = (string)args.Value;
         _searchTimer.Stop();
         _searchTimer.Start();
     }

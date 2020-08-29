@@ -36,8 +36,9 @@ namespace Duckify {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<User, IdentityRole>(options => 
-                    options.SignIn.RequireConfirmedAccount = true)
+            services.AddIdentity<User, IdentityRole>(options => {
+                    options.SignIn.RequireConfirmedAccount = true;
+                })
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
