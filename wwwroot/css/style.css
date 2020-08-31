@@ -8,3 +8,9 @@
 .container{
     margin-bottom: 75px;
 }
+
+.vertical-center {
+    min-height: 75vh; /* These two lines are counted as one :-)       */
+    display: flex;
+    align-items: center;
+}

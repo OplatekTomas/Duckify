@@ -1,20 +1,33 @@
 ﻿@page "/"
 @inject SpotifyService Spotify
-@using Duckify.Services  
+@inject SignInManager<User> Auth
+@using Duckify.Services
 @using Duckify.Components
-<div class="container">
-    <div class="md-form mt-0">
-        <SpotifySearchComponent/>
-    </div>
-    <div class="md-form mt-2">
-        <SpotifyQueueComponent/>
-    </div>
-</div>
+@using System.Security.Claims
+@using Duckify.Models
+@using Microsoft.AspNetCore.Identity
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="jumbotron vertical-center bg-transparent">
+            <div class="container">
+                <AuthIndexPage/>
+            </div>
+        </div>
+    </NotAuthorized>
+    <Authorized>
+        <div class="container">
+            <div class="md-form mt-0">
+                <SpotifySearchComponent/>
+            </div>
+            <div class="md-form mt-2">
+                <SpotifyQueueComponent/>
+            </div>
 
+        </div>
+
+    </Authorized>
+</AuthorizeView>
 
 @code{
-
- 
-
-
+    
 }
