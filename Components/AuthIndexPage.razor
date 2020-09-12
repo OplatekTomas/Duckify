@@ -6,33 +6,23 @@
 @inject SignInManager<User> Auth
 @inject ApplicationDbContext Context;
 
-<div class="my-auto align-self-center" style="position: relative">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, 50%)">
-        <h3 class="text-center text-warning">Welcome to Duckify!</h3>
-        <div class="text-center">
-            To use the service either enter a VUT email or register with your own.
+<EditForm Model="Login" OnValidSubmit="Submit">
+    <div class="input-group mb-3 mt-3">
+        <InputText type="text" placeholder="Faculty email" class="text-white form-control bg-dark" @bind-Value="Login.Email"/>
+        <div class="input-group-append">
+            <button class=" btn btn-outline-warning" type="submit">Submit</button>
         </div>
-        <EditForm Model="Login" OnValidSubmit="Submit">
-            <div class="input-group mb-3 mt-3">
-                <InputText type="text" placeholder="Faculty email" class="text-white form-control bg-dark" @bind-Value="Login.Email"/>
-                <div class="input-group-append">
-                    <button class=" btn btn-outline-warning" type="submit">Submit</button>
-                </div>
-
-            </div>
-            <ValidationMessage For="() => Login.Email" class=""/>
-            <span style="color: red;" >@Err</span>
-            <DataAnnotationsValidator/>
-        </EditForm>
     </div>
-
-</div>
+    <ValidationMessage For="() => Login.Email" class=""/>
+    <span style="color: red;">@Err</span>
+    <DataAnnotationsValidator/>
+</EditForm>
 
 @code {
 
     TempLogin Login { get; set; }
-    
-    readonly Dictionary<string,object> Attributes = new Dictionary<string, object>{{"class","text-danger"}};
+
+    readonly Dictionary<string, object> Attributes = new Dictionary<string, object> {{"class", "text-danger"}};
 
     protected override void OnInitialized() {
         Login = new TempLogin();
@@ -46,7 +36,7 @@
     private void Submit(EditContext editContext) {
         Err = "Email is not in range";
     }
-    
+
 
     class TempLogin {
         [Required]
