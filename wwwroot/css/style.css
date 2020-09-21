@@ -14,3 +14,15 @@
     display: flex;
     align-items: center;
 }
+
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+    display: flex;
+}
+
+.navbar-song-name{
+    align-items: center;
+                      margin-top: 5px;
+}

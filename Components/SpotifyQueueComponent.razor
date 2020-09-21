@@ -37,9 +37,12 @@ else {
                 </td>
                 <td class="d-none d-sm-table-cell align-middle text-center">@Helper.ConvertMs(song.Track.DurationMs)</td>
                 <td class="align-middle text-center">@song.LikeCount</td>
-
                 <td class="align-middle">
-                     <img src="img/like.png" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="args => LikeSong(song.SongId)" alt="Like image">
+                    @if (SongQueue.UserLikes(song.SongId, User)) {
+                        <img src="img/like_filled.png" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="@(args => LikeSong(song.SongId))" alt="Like image">
+                    } else {
+                        <img src="img/like.png" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="@(args => LikeSong(song.SongId))" alt="Like image">
+                    }
                 </td>
             </tr>
         }
@@ -52,18 +55,20 @@ else {
 @code {
 
 
-    protected override void OnInitialized() {
-        SongQueue.QueueChanged += EventTriggered;
+    private User User { get; set; }
 
-        base.OnInitialized();
+    protected override async void OnInitialized() {
+        SongQueue.QueueChanged += EventTriggered;
+        User = await UserManager.GetUserAsync(Accessor.HttpContext.User);
+        await base.OnInitializedAsync();
     }
 
     ~SpotifyQueueComponent() {
         SongQueue.QueueChanged -= EventTriggered;
     }
 
-    private async Task LikeSong(string id) {
-        SongQueue.Like(id, await UserManager.GetUserAsync(Accessor.HttpContext.User));
+    private void LikeSong(string id) {
+        SongQueue.Like(id, User);
     }
 
     private async void EventTriggered(object s, EventArgs args) {

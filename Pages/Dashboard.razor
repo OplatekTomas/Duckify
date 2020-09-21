@@ -2,7 +2,11 @@
 @using Duckify.Data
 @using Duckify.Services
 @using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.EntityFrameworkCore.Metadata.Conventions
 @using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Primitives
+@using SpotifyAPI.Web
+@inject IJSRuntime JSRuntime
 
 @inject AuthenticationStateProvider Auth
 @inject NavigationManager NavigationManager
@@ -14,21 +18,72 @@
     <h5>Nice attempt tho</h5>
     return;
 }
+<div class="container">
+    @if (!Spotify.IsAuthenticated) {
+        <button type="button" disabled="@IsDisabled" class="btn btn-success" @onclick="RedirectToSpotify">Log in with Spotify</button>
+        <span class="text-danger" hidden="@(!IsDisabled)"> Spotify API client ID and Secret is not configured</span>
+    }
+    else {
+        <select class="form-control bg-dark text-light" @onchange="OptionSelected">
+            <option value="0">Select playback device</option>
+            @foreach (var device in Spotify.Client.Player.GetAvailableDevices().Result.Devices) {
+                <option value="@device.Id">@device.Name (@device.Type)</option>
+            }
+            <option value="ThisBrowser">This browser</option>
+        </select>
+    }
 
-<button type="button" disabled="@IsDisabled" class="btn btn-success" @onclick="RedirectToSpotify">Log in with Spotify</button>
+</div>
 
-<span class="text-danger" hidden="@(!IsDisabled)"> Spotify API client ID and Secret is not configured</span>
 
 @code{
 
     bool IsDisabled { get; set; }
 
+    static string _id;
+
+    private static Action _action;
+    
     protected override void OnInitialized() {
         base.OnInitialized();
+        _action = TransferPlayback;
         IsDisabled = !Spotify.HasClientIds;
     }
+
     private void RedirectToSpotify() {
         NavigationManager.NavigateTo(Spotify.GetSpotifyLoginRedirectUri());
+    }
+
+    private async void OptionSelected(ChangeEventArgs e) {
+        var value = (string) e.Value;
+        switch (value) {
+            case "0":
+                return;
+            case "ThisBrowser":
+                await JSRuntime.InvokeVoidAsync("createDevice", Spotify.Auth.AccessToken);
+                return;
+            default:
+                await TransferPlayback(value);
+                break;
+        }
+    }
+
+
+    private async Task TransferPlayback(string id) {
+        await Spotify.Client.Player.TransferPlayback(new PlayerTransferPlaybackRequest(new List<string>() {id}));
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void TransferPlayback() {
+        var res = Spotify.Client.Player.TransferPlayback(new PlayerTransferPlaybackRequest(new List<string>() {_id})).Result;
+        InvokeAsync(StateHasChanged);
+
+    }
+
+    [JSInvokable]
+    public static void InformPlayback(string id) {
+        _id = id;
+        _action.Invoke();
     }
 
 }

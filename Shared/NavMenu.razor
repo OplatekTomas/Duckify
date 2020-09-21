@@ -1,21 +1,38 @@
 ﻿@using Duckify.Data
+@using Duckify.Services
+
+@inject SpotifyService Spotify
+@inject SongQueue Queue
+@implements IDisposable
 
 <a class="navbar-brand text-warning" href="">Duckify</a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColl" aria-controls="navbarColl" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
 </button>
+@if (CurrentlyPlaying != null) {
+    <div class="navbar-center">
+        <img src="@CurrentlyPlaying.Track?.Album.Images[0].Url" alt="Currently playing cover" class="rounded shadow" height="60" width="60">
+        <div class="navbar-song-name ml-2">
+             <div >
+                            <span class="font-weight-bold">@CurrentlyPlaying.Track?.Name</span> - (@Helper.ConvertArtists(CurrentlyPlaying.Track?.Artists))
+                        </div>
+            
+            <div class="mt-1">
+                <img src="img/pause.png" alt="Pause button" height="20px" width="20px">
+                <img src="img/next.png" class="ml-1" alt="Next button" height="20px" width="20px">
+            </div>
+           
+        </div>
+    </div>
+}
+
 <div class="navbar-collapse collapse" id="navbarColl">
     <ul class="navbar-nav ml-auto">
-        <!--<li class="nav-item">
-            <NavLink class="nav-link text-warning" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home text-warning" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>  -->
         <AuthorizeView>
             <Authorized>
                 @if (context.User.IsInRole("Admin")) {
                     <NavLink class="nav-link text-warning" href="dashboard" Match="NavLinkMatch.All">
-                         Dashboard
+                        Dashboard
                     </NavLink>
                 }
                 <li class="nav-item">
@@ -38,3 +55,29 @@
         </AuthorizeView>
     </ul>
 </div>
+
+
+@code{
+
+    QueueItem CurrentlyPlaying { get; set; }
+
+    private void SongChanged(object sender, QueueChangedEventArgs args) {
+        if (args.ChangeType != QueueChangedEventArgs.EventTypes.PlayingSongChanged) {
+            return;
+        }
+        CurrentlyPlaying = Queue?.CurrentlyPlaying;
+        InvokeAsync(StateHasChanged);
+    }
+
+
+    protected override void OnInitialized() {
+        CurrentlyPlaying = Queue.CurrentlyPlaying;
+        Queue.QueueChanged += SongChanged;
+        base.OnInitialized();
+    }
+
+    public void Dispose() {
+        Queue.QueueChanged -= SongChanged;
+    }
+
+}

@@ -22,23 +22,24 @@
             </tr>
             </thead>
             <tbody>
-            @foreach (var song in Tracks) {
+            @foreach (var song in Tracks.Where(song => !Queue.UserLikes(song.Id, User))) {
                 <tr>
-                <td width="88">
-                    <img src="@song.Album.Images[0].Url" class="rounded shadow" height="56" width="56"/>
-                </td>
-                <td class="align-middle demo">
-                    <div>
-                        <span class="font-weight-bold">@song.Name</span>
-                    </div>
-                    <div>
-                        <span>@Helper.ConvertArtists(song.Artists)</span>
-                    </div>
-                </td>
-                <td class="d-none d-sm-table-cell align-middle">@Helper.ConvertMs(song.DurationMs)</td>
-                <td class="align-middle">
-                    <img src="img/like.png" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button" onmouseout="this.src='img/like.png'" @onclick="args => AddSong(song.Id)" alt="Like image">
-                </td>
+                    <td width="88">
+                        <img src="@song.Album.Images[0].Url" alt="Album cover" class="rounded shadow" height="56" width="56"/>
+                    </td>
+                    <td class="align-middle demo">
+                        <div>
+                            <span class="font-weight-bold">@song.Name</span>
+                        </div>
+                        <div>
+                            <span>@Helper.ConvertArtists(song.Artists)</span>
+                        </div>
+                    </td>
+                    <td class="d-none d-sm-table-cell align-middle">@Helper.ConvertMs(song.DurationMs)</td>
+                    <td class="align-middle">
+                        <img src="img/like.png" alt="Like button" onmouseover="this.src='img/like_filled.png'" class="mx-auto d-block like_button"
+                             onmouseout="this.src='img/like.png'" @onclick="@(args => AddSong(song.Id))">
+                    </td>
                 </tr>
             }
             </tbody>
@@ -59,6 +60,13 @@
 
     private string SearchText { get; set; }
 
+    private User User { get; set; }
+
+    protected override async void OnInitialized() {
+        User = await UserManager.GetUserAsync(Accessor.HttpContext.User);
+        await base.OnInitializedAsync();
+    }
+
     public SpotifySearchComponent() {
         Tracks = new List<FullTrack>();
         _searchTimer = new Timer(200);
@@ -67,7 +75,7 @@
     }
 
     private async Task AddSong(string id) {
-        await Queue.Add(id,await UserManager.GetUserAsync(Accessor.HttpContext.User));
+        await Queue.Add(id, User);
         IsHidden = true;
         SearchText = "";
         await InvokeAsync(StateHasChanged);

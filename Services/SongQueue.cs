@@ -13,7 +13,6 @@ namespace Duckify.Services {
         public User AddedBy { get; set; }
 
         public List<User> LikedBy { get; set; } = new List<User>();
-
     }
 
     public class QueueChangedEventArgs : EventArgs {
@@ -59,12 +58,18 @@ namespace Duckify.Services {
             item.LikedBy.Add(user);
             if (Queue.Count == 0 && CurrentlyPlaying == null) {
                 CurrentlyPlaying = item;
+                QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.PlayingSongChanged));
             }
             else {
                 Queue.Add(item);
+                QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongAdded));
             }
 
-            QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongAdded));
+        }
+
+        public bool UserLikes(string id, User user) {
+            var index = Queue.FindIndex(x => x.SongId == id);
+            return index >= 0 && Queue[index].LikedBy.Contains(user);
         }
 
 
@@ -74,12 +79,18 @@ namespace Duckify.Services {
 
         public void Like(string id, User user) {
             var index = Queue.FindIndex(x => x.SongId == id);
+            if (Queue[index].LikedBy.Contains(user)) {
+                UnlikeIndexed(index, user);
+                return;
+            }
+
             Queue[index].LikeCount++;
             Queue[index].LikedBy.Add(user);
             if (index == 0) {
                 QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongLiked));
                 return;
             }
+
             var item = Queue[index];
             while (index != 0 && item.LikeCount > Queue[index - 1].LikeCount) {
                 index--;
@@ -89,17 +100,25 @@ namespace Duckify.Services {
             Queue.Insert(index, item);
             QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongLiked));
         }
-
+        
         public void Unlike(string id, User user) {
             if (!Queue.Any(x => x.LikedBy.Contains(user))) {
                 return;
             }
             var index = Queue.FindIndex(x => x.SongId == id);
-            if (Queue[index].LikeCount == 1) {
+            UnlikeIndexed(index, user);
+        }
+        
+        private void UnlikeIndexed(int index, User user) {
+            if (Queue[index].LikeCount <= 1) {
                 Queue.RemoveAt(index);
                 QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongRemoved));
-
+                return;
             }
+
+            Queue[index].LikeCount--;
+            Queue[index].LikedBy.Remove(user);
+            QueueChanged?.Invoke(this, new QueueChangedEventArgs(QueueChangedEventArgs.EventTypes.SongLiked));
         }
 
         public void Next() {

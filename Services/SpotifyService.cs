@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,6 +15,11 @@ namespace Duckify.Services {
         private readonly string _clientId;
 
         private readonly string _clientSecret;
+
+        private readonly List<string> _scope = new List<string>() {
+            "user-read-playback-state user-modify-playback-state user-read-currently-playing streaming", //Required for playback control
+            "user-read-private" //Not required right now. Will make use of it later. //TODO: Make use of this
+        };
 
         private readonly string _callbackUri = "https://localhost:5001/spotify-callback";
 
@@ -34,11 +40,13 @@ namespace Duckify.Services {
         }
 
         public string GetSpotifyLoginRedirectUri() {
+            
             var uriBuilder = new UriBuilder("https://accounts.spotify.com/authorize");
             var queryBuilder = new QueryBuilder();
             queryBuilder.Add("client_id", _clientId);
             queryBuilder.Add("response_type", "code");
             queryBuilder.Add("redirect_uri", _callbackUri);
+            queryBuilder.Add("scope", String.Join(" ", _scope));
             uriBuilder.Query = queryBuilder.ToString();
             return uriBuilder.ToString();
         }
